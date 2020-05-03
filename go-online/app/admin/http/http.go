@@ -31,17 +31,22 @@ func Init(c *conf.Config, s *service.Service) {
 
 func route(e *bm.Engine) {
 	e.Ping(ping)
-	g := e.Group("/x/admin/activity")
+	g := e.Group("/v1/admin")
 	{
-		g.GET("/arcs", archives)
-		// gapp := g.Group("/matchs", authSrv.Permit("ACT_MATCHS_MGT_TEST"))
-		gapp := g.Group("/matchs")
+		gapp := g.Group("/group")
 		{
-			gapp.POST("/add", addMatch)
-			gapp.POST("/save", saveMatch)
-			gapp.GET("/info", matchInfo)
-			gapp.GET("/list", matchList)
+			gapp.GET("/list", groupList)
+			gapp.GET("/info", groupInfo)
 		}
+		// g.GET("/arcs", archives)
+		// gapp := g.Group("/matchs", authSrv.Permit("ACT_MATCHS_MGT_TEST"))
+		// gapp := g.Group("/matchs")
+		// {
+		// 	gapp.POST("/add", addMatch)
+		// 	gapp.POST("/save", saveMatch)
+		// 	gapp.GET("/info", matchInfo)
+		// 	gapp.GET("/list", matchList)
+		// }
 		// gappO := g.Group("/matchs/object", authSrv.Permit("ACT_MATCHS_MGT_TEST"))
 		// {
 		// 	gappO.POST("/add", addMatchObject)
