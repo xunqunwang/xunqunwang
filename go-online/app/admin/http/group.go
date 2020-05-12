@@ -15,7 +15,7 @@ func groupList(c *bm.Context) {
 		list  []*model.Group
 	)
 	v := new(struct {
-		Page int `form:"pn" default:"1"`
+		Page int `form:"pn" default:"0"`
 		Size int `form:"ps" default:"20"`
 	})
 	if err = c.Bind(v); err != nil {
@@ -24,7 +24,13 @@ func groupList(c *bm.Context) {
 	}
 	db := actSrv.DB
 	if v.Page == 0 {
-		v.Page = 1
+		if err = db.Find(&list).Error; err != nil {
+			log.Error("groupList error(%v)", err)
+			c.JSON(nil, err)
+			return
+		}
+		c.JSON(list, nil)
+		return
 	}
 	if v.Size == 0 {
 		v.Size = 20
@@ -55,12 +61,11 @@ func groupList(c *bm.Context) {
 		"ps":    v.Size,
 		"total": count,
 	}
-	// c.JSON(data, nil)
 	c.JSONMap(data, nil)
 }
 
 func groupInfo(c *bm.Context) {
-	arg := new(model.GroupDetail)
+	arg := new(model.Group)
 	if err := c.Bind(arg); err != nil {
 		return
 	}

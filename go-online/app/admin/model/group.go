@@ -17,7 +17,11 @@ type Group struct {
 	GroupScale       int64     `json:"group_scale" form:"group_scale" gorm:"column:group_scale"`
 	GroupDescription string    `json:"group_description" form:"group_description" gorm:"column:group_description"`
 	GroupActivity    int64     `json:"group_activity" form:"group_activity" gorm:"column:group_activity"`
-	GroupPhoto       string    `json:"group_phote" form:"group_phote" gorm:"column:group_phote"`
+	GroupPhoto       string    `json:"group_photo" form:"group_photo" gorm:"column:group_photo"`
+	OwnDescription   string    `json:"owner_description" form:"owner_description" gorm:"column:owner_description"`
+	EntryMethod      string    `json:"entry_method" form:"entry_method" gorm:"column:entry_method"`
+	GroupRule        string    `json:"group_rule" form:"group_rule" gorm:"column:group_rule"`
+	GroupDetail      string    `json:"group_detail" form:"group_detail" gorm:"column:group_detail"`
 	CreatedTime      time.Time `json:"created_at" form:"created_at" gorm:"column:created_at"`
 	UpdatedTime      time.Time `json:"updated_at" form:"updated_at" gorm:"column:updated_at"`
 }
@@ -26,16 +30,16 @@ func (Group) TableName() string {
 	return "grouptbl"
 }
 
-type GroupDetail struct {
-	GroupID        int64     `json:"group_id" form:"group_id" gorm:"column:group_id"`
-	OwnDescription string    `json:"owner_description" form:"owner_description" gorm:"column:owner_description"`
-	EntryMethod    string    `json:"entry_method" form:"entry_method" gorm:"column:entry_method"`
-	GroupRule      string    `json:"group_rule" form:"group_rule" gorm:"column:group_rule"`
-	GroupDetail    string    `json:"group_detail" form:"group_detail" gorm:"column:group_detail"`
-	CreatedTime    time.Time `json:"created_at" form:"created_at" gorm:"column:created_at"`
-	UpdatedTime    time.Time `json:"updated_at" form:"updated_at" gorm:"column:updated_at"`
-}
+// type GroupDetail struct {
+// 	GroupID        int64     `json:"group_id" form:"group_id" gorm:"column:group_id"`
+// 	OwnDescription string    `json:"owner_description" form:"owner_description" gorm:"column:owner_description"`
+// 	EntryMethod    string    `json:"entry_method" form:"entry_method" gorm:"column:entry_method"`
+// 	GroupRule      string    `json:"group_rule" form:"group_rule" gorm:"column:group_rule"`
+// 	GroupDetail    string    `json:"group_detail" form:"group_detail" gorm:"column:group_detail"`
+// 	CreatedTime    time.Time `json:"created_at" form:"created_at" gorm:"column:created_at"`
+// 	UpdatedTime    time.Time `json:"updated_at" form:"updated_at" gorm:"column:updated_at"`
+// }
 
-func (GroupDetail) TableName() string {
-	return "group_detail"
-}
+// func (GroupDetail) TableName() string {
+// 	return "group_detail"
+// }
