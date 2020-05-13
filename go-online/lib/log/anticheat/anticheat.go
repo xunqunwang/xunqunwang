@@ -33,7 +33,7 @@ type antiCheat struct {
 	Mid    string
 
 	Sid      string
-	Refer    string
+	// Refer    string
 	URL      string
 	From     string
 	ItemID   string
@@ -80,7 +80,8 @@ const (
 func (a *antiCheat) toSlice() (as []interface{}) {
 	as = make([]interface{}, 0, 18)
 	as = append(as, a.Buvid, a.Build, a.Client, a.IP, a.UID, a.Aid, a.Mid)
-	as = append(as, a.Sid, a.Refer, a.URL, a.From, a.ItemID, a.ItemType)
+	// as = append(as, a.Sid, a.Refer, a.URL, a.From, a.ItemID, a.ItemType)
+	as = append(as, a.Sid, a.URL, a.From, a.ItemID, a.ItemType)
 	as = append(as, a.Action, a.ActionID, a.UA, a.TS, a.Extra)
 	return
 }
@@ -103,7 +104,7 @@ func (a *AntiCheat) infoAntiCheat(ctx context.Context, req *http.Request, IP, ui
 		ActionID: actionID,
 		IP:       IP,
 		URL:      req.URL.Path,
-		Refer:    req.Header.Get("Referer"),
+		// Refer:    req.Header.Get("Referer"),
 		UA:       req.Header.Get("User-Agent"),
 		TS:       strconv.FormatInt(time.Now().Unix(), 10),
 	}
@@ -169,7 +170,7 @@ func convertBase(p map[string]string) (res []interface{}) {
 		Sid:      p["sid"],
 		UA:       p["ua"],
 		Buvid:    p["buvid"],
-		Refer:    p["refer"],
+		// Refer:    p["refer"],
 		URL:      p["url"],
 		TS:       strconv.FormatInt(time.Now().Unix(), 10),
 	}
