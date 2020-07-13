@@ -2,6 +2,7 @@ package proxy
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"io/ioutil"
 	stdlog "log"
@@ -59,6 +60,7 @@ func (e *endpoint) director(req *http.Request) {
 }
 
 func (e *endpoint) ServeHTTP(ctx *bm.Context) {
+	fmt.Println("Proxy")
 	req := ctx.Request
 	ip := metadata.String(ctx, metadata.RemoteIP)
 	logArgs := []log.D{

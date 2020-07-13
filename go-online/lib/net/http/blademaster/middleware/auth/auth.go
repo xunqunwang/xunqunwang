@@ -1,7 +1,9 @@
 package auth
 
 import (
-	idtv1 "go-common/app/service/main/identify/api/grpc"
+	// idtv1 "go-common/app/service/main/identify/api/grpc"
+	"fmt"
+	idtv1 "go-online/app/domain/identify/api/grpc"
 	"go-online/lib/ecode"
 	bm "go-online/lib/net/http/blademaster"
 	"go-online/lib/net/metadata"
@@ -41,6 +43,7 @@ func New(conf *Config) *Auth {
 	if err != nil {
 		panic(errors.WithMessage(err, "Failed to dial identify service"))
 	}
+	fmt.Println(" idtv1.NewClient success")
 	auth := &Auth{
 		IdentifyClient: identify,
 		conf:           conf,
@@ -51,9 +54,21 @@ func New(conf *Config) *Auth {
 // User is used to mark path as access required.
 // If `access_key` is exist in request form, it will using mobile access policy.
 // Otherwise to web access policy.
+// func (a *Auth) User(ctx *bm.Context) {
+// 	fmt.Println("Auth:User")
+// 	req := ctx.Request
+// 	if req.Form.Get("access_key") == "" {
+// 		a.UserWeb(ctx)
+// 		return
+// 	}
+// 	a.UserMobile(ctx)
+// }
+
+// modified by wangkai
 func (a *Auth) User(ctx *bm.Context) {
+	fmt.Println("Auth:User")
 	req := ctx.Request
-	if req.Form.Get("access_key") == "" {
+	if req.Header.Get("access_key") != "" {
 		a.UserWeb(ctx)
 		return
 	}
@@ -61,12 +76,21 @@ func (a *Auth) User(ctx *bm.Context) {
 }
 
 // UserWeb is used to mark path as web access required.
+// func (a *Auth) UserWeb(ctx *bm.Context) {
+// 	fmt.Println("Auth:UserWeb")
+// 	a.midAuth(ctx, a.AuthCookie)
+// }
+
+// modified by wangkai
 func (a *Auth) UserWeb(ctx *bm.Context) {
-	a.midAuth(ctx, a.AuthCookie)
+	fmt.Println("Auth:UserWeb")
+	// a.midAuth(ctx, a.AuthCookie)
+	a.midAuth(ctx, a.AuthToken)
 }
 
 // UserMobile is used to mark path as mobile access required.
 func (a *Auth) UserMobile(ctx *bm.Context) {
+	fmt.Println("Auth:UserMobile")
 	a.midAuth(ctx, a.AuthToken)
 }
 
@@ -74,6 +98,7 @@ func (a *Auth) UserMobile(ctx *bm.Context) {
 // If `access_key` is exist in request form, it will using mobile access policy.
 // Otherwise to web access policy.
 func (a *Auth) Guest(ctx *bm.Context) {
+	fmt.Println("Auth:Guest")
 	req := ctx.Request
 	if req.Form.Get("access_key") == "" {
 		a.GuestWeb(ctx)
@@ -84,6 +109,7 @@ func (a *Auth) Guest(ctx *bm.Context) {
 
 // GuestWeb is used to mark path as web guest policy.
 func (a *Auth) GuestWeb(ctx *bm.Context) {
+	fmt.Println("Auth:GuestWeb")
 	a.guestAuth(ctx, a.AuthCookie)
 }
 
@@ -93,13 +119,35 @@ func (a *Auth) GuestMobile(ctx *bm.Context) {
 }
 
 // AuthToken is used to authorize request by token
+// func (a *Auth) AuthToken(ctx *bm.Context) (int64, error) {
+// 	fmt.Println("AuthToken")
+// 	req := ctx.Request
+// 	key := req.Form.Get("access_key")
+// 	if key == "" {
+// 		return 0, ecode.NoLogin
+// 	}
+// 	buvid := req.Header.Get("buvid")
+
+// 	reply, err := a.GetTokenInfo(ctx, &idtv1.GetTokenInfoReq{Token: key, Buvid: buvid})
+// 	if err != nil {
+// 		return 0, err
+// 	}
+// 	if !reply.IsLogin {
+// 		return 0, ecode.NoLogin
+// 	}
+
+// 	return reply.Mid, nil
+// }
+
+// modified by wangkai
 func (a *Auth) AuthToken(ctx *bm.Context) (int64, error) {
+	fmt.Println("AuthToken")
 	req := ctx.Request
-	key := req.Form.Get("access_key")
+	key := req.Header.Get("access_key")
 	if key == "" {
 		return 0, ecode.NoLogin
 	}
-	buvid := req.Header.Get("buvid")
+	buvid := req.Header.Get("buvid") // buvid 移动端上报，再请求header里有，标识设备
 
 	reply, err := a.GetTokenInfo(ctx, &idtv1.GetTokenInfoReq{Token: key, Buvid: buvid})
 	if err != nil {
@@ -114,6 +162,7 @@ func (a *Auth) AuthToken(ctx *bm.Context) (int64, error) {
 
 // AuthCookie is used to authorize request by cookie
 func (a *Auth) AuthCookie(ctx *bm.Context) (int64, error) {
+	fmt.Println("Auth:AuthCookie")
 	req := ctx.Request
 	ssDaCk, _ := req.Cookie("SESSDATA")
 	if ssDaCk == nil {
@@ -147,10 +196,12 @@ func (a *Auth) midAuth(ctx *bm.Context, auth authFunc) {
 		ctx.Abort()
 		return
 	}
+	ctx.Request.Header.Set("mid", fmt.Sprintf("%d", mid))
 	setMid(ctx, mid)
 }
 
 func (a *Auth) guestAuth(ctx *bm.Context, auth authFunc) {
+	fmt.Println("Auth:guestAuth")
 	mid, err := auth(ctx)
 	// no error happened and mid is valid
 	if err == nil && mid > 0 {

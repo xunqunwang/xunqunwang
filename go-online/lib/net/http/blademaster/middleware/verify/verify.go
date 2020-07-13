@@ -3,6 +3,7 @@ package verify
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"fmt"
 	"net/url"
 	"strings"
 	"sync"
@@ -107,12 +108,22 @@ func (v *Verify) verify(ctx *bm.Context) error {
 }
 
 // Verify will inject into handler func as verify required
+// func (v *Verify) Verify(ctx *bm.Context) {
+// 	if err := v.verify(ctx); err != nil {
+// 		ctx.JSON(nil, err)
+// 		ctx.Abort()
+// 		return
+// 	}
+// }
+
+// Modified by wangkai
 func (v *Verify) Verify(ctx *bm.Context) {
-	if err := v.verify(ctx); err != nil {
-		ctx.JSON(nil, err)
-		ctx.Abort()
-		return
-	}
+	fmt.Println("Verify")
+	// if err := v.verify(ctx); err != nil {
+	// 	ctx.JSON(nil, err)
+	// 	ctx.Abort()
+	// 	return
+	// }
 }
 
 // VerifyUser is used to mark path as verify and mid required.

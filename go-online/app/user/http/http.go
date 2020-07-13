@@ -1,10 +1,10 @@
 package http
 
 import (
-	"go-online/app/admin/conf"
-	"go-online/app/admin/service"
+	"go-online/app/user/conf"
+	"go-online/app/user/service"
 
-	// "go-online/app/admin/service/kfc"
+	// "go-online/app/user/service/kfc"
 	"go-online/lib/log"
 	bm "go-online/lib/net/http/blademaster"
 	"go-online/lib/net/http/blademaster/middleware/permit"
@@ -31,16 +31,11 @@ func Init(c *conf.Config, s *service.Service) {
 
 func route(e *bm.Engine) {
 	e.Ping(ping)
-	g := e.Group("/v1/admin")
+	g := e.Group("/v1/user")
 	{
-		gapp := g.Group("/group")
-		{
-			gapp.GET("/list", groupList)
-			gapp.GET("/info", groupInfo)
-			gapp.POST("/add", addGroup)
-			gapp.PUT("/save", saveGroup)
-			gapp.DELETE("/delete", deleteGroup)
-		}
+		g.POST("/register", userRegister)
+		g.PUT("/login", userLogin)
+		g.PUT("/logout", userLogout)
 	}
 }
 

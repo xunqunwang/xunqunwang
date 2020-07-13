@@ -4,21 +4,8 @@ import (
 	"time"
 )
 
-type GroupParam struct {
-	Page       int      `json:"pn" form:"pn" default:"0"`
-	Size       int      `json:"ps" form:"ps" default:"0"`
-	GroupIDs   []int64  `json:"group_ids" form:"group_ids"`
-	UIDs       []int64  `json:"uids" form:"uids"`
-	GroupNames []string `json:"group_names" form:"group_names"`
-	Owners     []string `json:"owners" form:"owners"`
-	Locations  []string `json:"locations" form:"locations"`
-	Categorys  []string `json:"categorys" form:"categorys"`
-	Labels     []string `json:"labels" form:"labels"`
-	IsFree     string   `json:"free" form:"free"`
-}
-
 type Group struct {
-	GroupID          int64     `json:"group_id" form:"group_id" default:"-1" gorm:"primary_key;column:group_id"`
+	GroupID          int64     `json:"group_id" form:"group_id" gorm:"column:group_id"`
 	UID              int64     `json:"uid" form:"uid" gorm:"column:uid"`
 	GroupName        string    `json:"group_name" form:"group_name" gorm:"column:group_name"`
 	Owner            string    `json:"owner" form:"owner" gorm:"column:owner"`

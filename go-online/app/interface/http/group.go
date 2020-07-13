@@ -1,13 +1,12 @@
 package http
 
 import (
-	"fmt"
-	"go-online/app/admin/model"
+	// "fmt"
+	"go-online/app/interface/model"
 	"go-online/lib/ecode"
 	"go-online/lib/log"
 	bm "go-online/lib/net/http/blademaster"
 	"go-online/lib/pic"
-	"strconv"
 	"time"
 )
 
@@ -17,42 +16,16 @@ func groupList(c *bm.Context) {
 		count int
 		list  []*model.Group
 	)
-	arg := new(model.GroupParam)
-	if err = c.Bind(arg); err != nil {
+	v := new(struct {
+		Page int `form:"pn" default:"0"`
+		Size int `form:"ps" default:"20"`
+	})
+	if err = c.Bind(v); err != nil {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 	db := actSrv.DB
-	if len(arg.GroupIDs) != 0 {
-		db = db.Where("group_id in (?)", arg.GroupIDs)
-	}
-	if len(arg.UIDs) != 0 {
-		db = db.Where("uid in (?)", arg.UIDs)
-	}
-	if len(arg.GroupNames) != 0 {
-		db = db.Where("group_name in (?)", arg.GroupNames)
-	}
-	if len(arg.Owners) != 0 {
-		db = db.Where("owner in (?)", arg.Owners)
-	}
-	if len(arg.Locations) != 0 {
-		db = db.Where("location in (?)", arg.Locations)
-	}
-	if len(arg.Categorys) != 0 {
-		db = db.Where("category in (?)", arg.Categorys)
-	}
-	if len(arg.Labels) != 0 {
-		db = db.Where("label in (?)", arg.Labels)
-	}
-	if arg.IsFree != "" {
-		if arg.IsFree == "是" {
-			db = db.Where("free = ?", 1)
-		} else if arg.IsFree == "否" {
-			db = db.Where("free = ?", 0)
-		}
-	}
-
-	if arg.Size == 0 { // 不分页
+	if v.Page == 0 {
 		if err = db.Find(&list).Error; err != nil {
 			log.Error("groupList error(%v)", err)
 			c.JSON(nil, err)
@@ -61,11 +34,20 @@ func groupList(c *bm.Context) {
 		c.JSON(list, nil)
 		return
 	}
-	// 分页查看
+	if v.Size == 0 {
+		v.Size = 20
+	}
+	// if v.Status != -1 {
+	// 	db = db.Where("status = ?", v.Status)
+	// }
+	// if v.SID != -1 {
+	// 	db = db.Where("sid = ?", v.SID)
+	// }
+	// db = db.Where("status = ?", 0)
 	if err = db.
-		Offset((arg.Page - 1) * arg.Size).Limit(arg.Size).
+		Offset((v.Page - 1) * v.Size).Limit(v.Size).
 		Find(&list).Error; err != nil {
-		log.Error("groupList(%d,%d) error(%v)", arg.Page, arg.Size, err)
+		log.Error("groupList(%d,%d) error(%v)", v.Page, v.Size, err)
 		c.JSON(nil, err)
 		return
 	}
@@ -77,8 +59,8 @@ func groupList(c *bm.Context) {
 
 	data := map[string]interface{}{
 		"data":  list,
-		"pn":    arg.Page,
-		"ps":    arg.Size,
+		"pn":    v.Page,
+		"ps":    v.Size,
 		"total": count,
 	}
 	c.JSONMap(data, nil)
@@ -102,31 +84,20 @@ func groupInfo(c *bm.Context) {
 }
 
 func addGroup(c *bm.Context) {
-	fmt.Println("addGroup")
-	var (
-		err error
-		cc  string
-	)
+	var err error
 	arg := new(model.Group)
 	if err := c.Bind(arg); err != nil {
-		log.Error("addGroup Bind error(%v)", err)
-		c.JSON(nil, err)
 		return
 	}
-	mid := c.Request.Header.Get("mid")
-	userId, _ := strconv.ParseInt(mid, 10, 64)
-	arg.UID = userId
 	arg.CreatedTime = time.Now()
 	// 图片base64编码
-	if arg.GroupPhoto == "" {
-		picPath := "./../../../JiqGstEfoWAOHiTxclqi.png"
-		if cc, err = pic.Base64Encoding(picPath); err != nil {
-			log.Error("pic.base64Encoding(%s,%d) error(%v)", picPath, arg.GroupID, err)
-			c.JSON(nil, err)
-			return
-		}
-		arg.GroupPhoto = cc
-	}
+	// picPath := "./../../../JiqGstEfoWAOHiTxclqi.png"
+	// if cc, err = pic.Base64Encoding(picPath); err != nil {
+	// 	log.Error("pic.base64Encoding(%s,%d) error(%v)", picPath, arg.GroupID, err)
+	// 	c.JSON(nil, err)
+	// 	return
+	// }
+	// arg.GroupPhoto = cc
 	if err = actSrv.DB.Create(arg).Error; err != nil {
 		log.Error("addGroup(%v) error(%v)", arg, err)
 		c.JSON(nil, err)
@@ -136,33 +107,25 @@ func addGroup(c *bm.Context) {
 }
 
 func saveGroup(c *bm.Context) {
-	fmt.Println("saveGroup")
 	var (
 		err error
 		cc  string
 	)
 	arg := new(model.Group)
 	if err := c.Bind(arg); err != nil {
-		log.Error("saveGroup Bind error(%v)", err)
-		c.JSON(nil, err)
 		return
 	}
-	if arg.GroupID == -1 {
+	if arg.GroupID == 0 {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
-	mid := c.Request.Header.Get("mid")
-	userId, _ := strconv.ParseInt(mid, 10, 64)
-	arg.UID = userId
-	if arg.GroupPhoto == "" {
-		picPath := "./../../../JiqGstEfoWAOHiTxclqi.png"
-		if cc, err = pic.Base64Encoding(picPath); err != nil {
-			log.Error("pic.base64Encoding(%s,%d) error(%v)", picPath, arg.GroupID, err)
-			c.JSON(nil, err)
-			return
-		}
-		arg.GroupPhoto = cc
+	picPath := "./../../../JiqGstEfoWAOHiTxclqi.png"
+	if cc, err = pic.Base64Encoding(picPath); err != nil {
+		log.Error("pic.base64Encoding(%s,%d) error(%v)", picPath, arg.GroupID, err)
+		c.JSON(nil, err)
+		return
 	}
+	arg.GroupPhoto = cc
 	// if err = actSrv.DB.Model(&model.Group{GroupID:arg.GroupID}).
 	if err = actSrv.DB.Model(arg).
 		Omit("group_id", "uid", "created_at").
@@ -185,30 +148,6 @@ func saveGroup(c *bm.Context) {
 			"updated_at":        time.Now(),
 		}).Error; err != nil {
 		log.Error("saveGroup(%d) error(%v)", arg.GroupID, err)
-		c.JSON(nil, err)
-		return
-	}
-	c.JSON(nil, nil)
-}
-
-func deleteGroup(c *bm.Context) {
-	var (
-		err error
-		uid int64
-	)
-	arg := new(struct {
-		GroupId int `json:"group_id" form:"group_id"`
-	})
-	if err := c.Bind(arg); err != nil {
-		log.Error("deleteGroup Bind error(%v)", err)
-		c.JSON(nil, err)
-		return
-	}
-	mid := c.Request.Header.Get("mid")
-	uid, _ = strconv.ParseInt(mid, 10, 64)
-	if err = actSrv.DB.Where("uid = ? and group_id = ?", uid, arg.GroupId).
-		Delete(model.Group{}).Error; err != nil {
-		log.Error("deleteGroup delete group error(%v)", err)
 		c.JSON(nil, err)
 		return
 	}
