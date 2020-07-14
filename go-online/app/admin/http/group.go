@@ -61,16 +61,14 @@ func groupList(c *bm.Context) {
 		c.JSON(list, nil)
 		return
 	}
+	if arg.Page == 0 {
+		arg.Page = 1
+	}
 	// 分页查看
 	if err = db.
-		Offset((arg.Page - 1) * arg.Size).Limit(arg.Size).
+		Offset((arg.Page - 1) * arg.Size).Limit(arg.Size).Count(&count).
 		Find(&list).Error; err != nil {
 		log.Error("groupList(%d,%d) error(%v)", arg.Page, arg.Size, err)
-		c.JSON(nil, err)
-		return
-	}
-	if err = db.Model(&model.Group{}).Count(&count).Error; err != nil {
-		log.Error("groupList count error(%v)", err)
 		c.JSON(nil, err)
 		return
 	}

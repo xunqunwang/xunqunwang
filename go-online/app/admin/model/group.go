@@ -7,13 +7,13 @@ import (
 type GroupParam struct {
 	Page       int      `json:"pn" form:"pn" default:"0"`
 	Size       int      `json:"ps" form:"ps" default:"0"`
-	GroupIDs   []int64  `json:"group_ids" form:"group_ids"`
-	UIDs       []int64  `json:"uids" form:"uids"`
-	GroupNames []string `json:"group_names" form:"group_names"`
-	Owners     []string `json:"owners" form:"owners"`
-	Locations  []string `json:"locations" form:"locations"`
-	Categorys  []string `json:"categorys" form:"categorys"`
-	Labels     []string `json:"labels" form:"labels"`
+	GroupIDs   []int64  `json:"group_ids" form:"group_ids,split"`
+	UIDs       []int64  `json:"uids" form:"uids,split"`
+	GroupNames []string `json:"group_names" form:"group_names,split"`
+	Owners     []string `json:"owners" form:"owners,split"`
+	Locations  []string `json:"locations" form:"locations,split"`
+	Categorys  []string `json:"categorys" form:"categorys,split"`
+	Labels     []string `json:"labels" form:"labels,split"`
 	IsFree     string   `json:"free" form:"free"`
 }
 
