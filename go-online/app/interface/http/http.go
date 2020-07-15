@@ -44,18 +44,12 @@ func initMiddleware(c *conf.Config) {
 func route(e *bm.Engine) {
 	e.Ping(ping)
 	proxyHandler := proxy.NewZoneProxy("sh001", "http://127.0.0.1:7741")
-	// g := e.Group("/v1/admin")
-	// {
-	// 	gapp := g.Group("/group")
-	// 	{
-	// 		gapp.GET("/list", proxyHandler, groupList)
-	// 		gapp.GET("/info", proxyHandler, groupInfo)
-	// 		gapp.POST("/add", proxyHandler, addGroup)
-	// 		gapp.PUT("/save", proxyHandler, saveGroup)
-	// 	}
-	// }
 	g := e.Group("/v1/admin")
 	{
+		testGroup := g.Group("/test")
+		{
+			testGroup.GET("/param", authSvc.Guest, verifySvc.Verify, proxyHandler)
+		}
 		gapp := g.Group("/group")
 		{
 			gapp.GET("/list", authSvc.Guest, verifySvc.Verify, proxyHandler)

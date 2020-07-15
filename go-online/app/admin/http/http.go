@@ -41,6 +41,10 @@ func route(e *bm.Engine) {
 			gapp.PUT("/save", saveGroup)
 			gapp.DELETE("/delete", deleteGroup)
 		}
+		testGroup := g.Group("/test")
+		{
+			testGroup.GET("/param", testParam)
+		}
 	}
 }
 

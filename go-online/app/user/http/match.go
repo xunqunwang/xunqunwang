@@ -68,7 +68,6 @@ func matchList(c *bm.Context) {
 		Size   int   `form:"ps" default:"20"`
 	})
 	if err = c.Bind(v); err != nil {
-		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 	db := actSrv.DB
@@ -170,7 +169,6 @@ func matchObjectList(c *bm.Context) {
 		MatchID int   `form:"match_id"`
 	})
 	if err = c.Bind(v); err != nil {
-		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 	db := actSrv.DB

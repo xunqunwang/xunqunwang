@@ -7,9 +7,9 @@ import (
 type User struct {
 	Id        int64     `json:"id" form:"id" gorm:"primary_key;column:id"`
 	NickName  string    `json:"nick_name" form:"nick_name" gorm:"column:nick_name"`
-	Email     string    `json:"email" form:"email" gorm:"column:email"`
+	Email     string    `json:"email" form:"email" validate:"required,email" gorm:"column:email"`
 	LoginName string    `json:"login_name" form:"login_name" gorm:"column:login_name"`
-	Password  string    `json:"password" form:"password" gorm:"column:password"`
+	Password  string    `json:"password" form:"password" validate:"required" gorm:"column:password"`
 	RegTime   time.Time `json:"reg_time" form:"reg_time" gorm:"column:reg_time"`
 	HeadPhoto string    `json:"head_photo" form:"head_photo" gorm:"column:head_photo"`
 	FansNum   int64     `json:"fans_num" form:"fans_num" gorm:"column:fans_num"`

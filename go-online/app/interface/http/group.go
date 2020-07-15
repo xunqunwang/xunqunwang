@@ -21,7 +21,6 @@ func groupList(c *bm.Context) {
 		Size int `form:"ps" default:"20"`
 	})
 	if err = c.Bind(v); err != nil {
-		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 	db := actSrv.DB

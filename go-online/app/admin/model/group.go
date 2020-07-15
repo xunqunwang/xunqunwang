@@ -18,7 +18,7 @@ type GroupParam struct {
 }
 
 type Group struct {
-	GroupID          int64     `json:"group_id" form:"group_id" default:"-1" gorm:"primary_key;column:group_id"`
+	GroupID          int64     `json:"group_id" form:"group_id" gorm:"primary_key;column:group_id"`
 	UID              int64     `json:"uid" form:"uid" gorm:"column:uid"`
 	GroupName        string    `json:"group_name" form:"group_name" gorm:"column:group_name"`
 	Owner            string    `json:"owner" form:"owner" gorm:"column:owner"`

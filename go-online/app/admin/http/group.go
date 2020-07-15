@@ -19,7 +19,6 @@ func groupList(c *bm.Context) {
 	)
 	arg := new(model.GroupParam)
 	if err = c.Bind(arg); err != nil {
-		c.JSON(nil, ecode.RequestErr)
 		return
 	}
 	db := actSrv.DB
@@ -83,7 +82,9 @@ func groupList(c *bm.Context) {
 }
 
 func groupInfo(c *bm.Context) {
-	arg := new(model.Group)
+	arg := new(struct {
+		GroupID int64 `json:"group_id" form:"group_id" validate:"required,number,min=1"`
+	})
 	if err := c.Bind(arg); err != nil {
 		return
 	}
@@ -91,12 +92,13 @@ func groupInfo(c *bm.Context) {
 		c.JSON(nil, ecode.RequestErr)
 		return
 	}
-	if err := actSrv.DB.Where("group_id = ?", arg.GroupID).First(arg).Error; err != nil {
+	group := new(model.Group)
+	if err := actSrv.DB.Where("group_id = ?", arg.GroupID).First(group).Error; err != nil {
 		log.Error("groupInfo(%d) error(%v)", arg.GroupID, err)
 		c.JSON(nil, err)
 		return
 	}
-	c.JSON(arg, nil)
+	c.JSON(group, nil)
 }
 
 func addGroup(c *bm.Context) {
@@ -108,7 +110,6 @@ func addGroup(c *bm.Context) {
 	arg := new(model.Group)
 	if err := c.Bind(arg); err != nil {
 		log.Error("addGroup Bind error(%v)", err)
-		c.JSON(nil, err)
 		return
 	}
 	mid := c.Request.Header.Get("mid")
@@ -142,7 +143,6 @@ func saveGroup(c *bm.Context) {
 	arg := new(model.Group)
 	if err := c.Bind(arg); err != nil {
 		log.Error("saveGroup Bind error(%v)", err)
-		c.JSON(nil, err)
 		return
 	}
 	if arg.GroupID == -1 {
@@ -195,11 +195,10 @@ func deleteGroup(c *bm.Context) {
 		uid int64
 	)
 	arg := new(struct {
-		GroupId int `json:"group_id" form:"group_id"`
+		GroupId int `json:"group_id" form:"group_id" validate:"required,number,min=1"`
 	})
 	if err := c.Bind(arg); err != nil {
 		log.Error("deleteGroup Bind error(%v)", err)
-		c.JSON(nil, err)
 		return
 	}
 	mid := c.Request.Header.Get("mid")

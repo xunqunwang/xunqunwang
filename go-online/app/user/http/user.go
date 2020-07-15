@@ -23,7 +23,6 @@ func userRegister(c *bm.Context) {
 	arg := new(model.User)
 	if err = c.Bind(arg); err != nil {
 		log.Error("userRegister error(%v)", err)
-		c.JSON(nil, err)
 		return
 	}
 	if arg.Email == "" || arg.Password == "" {
@@ -75,13 +74,12 @@ func userLogin(c *bm.Context) {
 	)
 	arg := new(struct {
 		NickName  string `json:"nick_name" form:"nick_name"`
-		Email     string `json:"email" form:"email"`
+		Email     string `json:"email" form:"email" validate:"email"`
 		LoginName string `json:"login_name" form:"login_name"`
-		Password  string `json:"password" form:"password"`
+		Password  string `json:"password" form:"password" validate:"required"`
 	})
 	if err = c.Bind(arg); err != nil {
 		log.Error("userLogin error(%v)", err)
-		c.JSON(nil, err)
 		return
 	}
 	if (arg.NickName == "" && arg.Email == "" && arg.LoginName == "") || arg.Password == "" {
