@@ -3,7 +3,7 @@
 	dir = "./../../../log/interface/"
 	
 [HTTPServer]
-    addr = "0.0.0.0:8000"
+    addr = "0.0.0.0:7741"
     maxListen = 1000
     timeout = "10m"
     readTimeout = "10m"
