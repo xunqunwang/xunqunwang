@@ -43,7 +43,7 @@ func initMiddleware(c *conf.Config) {
 
 func route(e *bm.Engine) {
 	e.Ping(ping)
-	proxyHandler := proxy.NewZoneProxy("sh001", "http://127.0.0.1:7741")
+	proxyHandler := proxy.NewZoneProxy("sh001", "http://127.0.0.1:8000")
 	g := e.Group("/v1/admin")
 	{
 		testGroup := g.Group("/test")
