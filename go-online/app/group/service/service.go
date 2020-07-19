@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"go-online/app/admin/conf"
-	"go-online/app/admin/dao"
+	"go-online/app/group/conf"
+	"go-online/app/group/dao"
 
 	// tagrpc "go-common/app/interface/main/tag/rpc/client"
 	// artrpc "go-common/app/interface/openplatform/article/rpc/client"

@@ -2,7 +2,7 @@ package http
 
 import (
 	"fmt"
-	"go-online/app/admin/model"
+	"go-online/app/group/model"
 	"go-online/lib/ecode"
 	"go-online/lib/log"
 	bm "go-online/lib/net/http/blademaster"

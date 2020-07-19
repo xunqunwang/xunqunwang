@@ -43,7 +43,7 @@ func userRegister(c *bm.Context) {
 		return
 	}
 	if count != 0 {
-		c.JSON(nil, ecode.AccountInexistence)
+		c.JSON(nil, ecode.AccountAlreadyRegistered)
 		return
 	}
 	arg.RegTime = time.Now()

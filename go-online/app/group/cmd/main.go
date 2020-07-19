@@ -5,9 +5,9 @@ import (
 	"os"
 	"time"
 
-	"go-online/app/admin/conf"
-	"go-online/app/admin/http"
-	"go-online/app/admin/service"
+	"go-online/app/group/conf"
+	"go-online/app/group/http"
+	"go-online/app/group/service"
 	"go-online/lib/log"
 	"go-online/lib/net/trace"
 	"go-online/lib/os/signal"

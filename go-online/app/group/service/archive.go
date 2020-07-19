@@ -3,7 +3,7 @@ package service
 // import (
 // 	"context"
 
-// 	lmdl "go-online/app/admin/model"
+// 	lmdl "go-online/app/group/model"
 // 	arcmdl "go-online/app/archive/api"
 // 	// "go-online/lib/log"
 // )

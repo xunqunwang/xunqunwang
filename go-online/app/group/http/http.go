@@ -1,10 +1,10 @@
 package http
 
 import (
-	"go-online/app/admin/conf"
-	"go-online/app/admin/service"
+	"go-online/app/group/conf"
+	"go-online/app/group/service"
 
-	// "go-online/app/admin/service/kfc"
+	// "go-online/app/group/service/kfc"
 	"go-online/lib/log"
 	bm "go-online/lib/net/http/blademaster"
 	"go-online/lib/net/http/blademaster/middleware/permit"

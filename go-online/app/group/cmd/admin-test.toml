@@ -1,6 +1,6 @@
 [Log]
 	# dir = "/data/log/activity-admin/"
-	dir = "./../../../log/admin/"
+	dir = "./../../../log/group/"
 	
 [HTTPServer]
     addr = "0.0.0.0:8000"

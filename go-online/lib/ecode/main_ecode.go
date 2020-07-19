@@ -246,10 +246,11 @@ var (
 	CoinOverMax         = New(34005) // 超过单个视频投币上限
 
 	// account
-	AccountOverdue     = New(35001) // token过期 -658
-	AccountNotLogin    = New(35002) // 未登录 -400
-	AccountInexistence = New(35003) // 用户不存在 -626
-	AccountAKNotFound  = New(35004) // accessKey不存在 -2
+	AccountOverdue           = New(35001) // token过期 -658
+	AccountNotLogin          = New(35002) // 未登录 -400
+	AccountInexistence       = New(35003) // 用户不存在 -626
+	AccountAKNotFound        = New(35004) // accessKey不存在 -2
+	AccountAlreadyRegistered = New(35005) // 用户已注册 -627
 
 	// player-interface
 	PLayerPolicyNotExist = New(19001) // 策略不存在

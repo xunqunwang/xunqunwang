@@ -3,7 +3,7 @@ package dao
 import (
 	"context"
 
-	"go-online/app/admin/conf"
+	"go-online/app/group/conf"
 	"go-online/lib/database/orm"
 	xhttp "go-online/lib/net/http/blademaster"
 
