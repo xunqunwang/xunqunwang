@@ -74,7 +74,7 @@ func userLogin(c *bm.Context) {
 	)
 	arg := new(struct {
 		NickName  string `json:"nick_name" form:"nick_name"`
-		Email     string `json:"email" form:"email" validate:"email"`
+		Email     string `json:"email" form:"email"`
 		LoginName string `json:"login_name" form:"login_name"`
 		Password  string `json:"password" form:"password" validate:"required"`
 	})
