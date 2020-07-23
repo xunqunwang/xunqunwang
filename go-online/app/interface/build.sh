@@ -3,8 +3,8 @@
 servicePath=`pwd`
 
 # Stop the running app
-appdir=app/user/cmd
-app=user
+appdir=app/interface/cmd
+app=interface
 cd $appdir
 p=$(pidof $servicePath/$appdir/$app )
 if [ $p ]
@@ -23,9 +23,9 @@ then
     echo "$app starting..."
     if [[ -n "$1" && "$1" = "release" ]]
     then
-		nohup $servicePath/$appdir/$app -conf "user-release.toml" >/data/log_xunqunwang/user/user.nohup &
+		nohup $servicePath/$appdir/$app -conf "interface-release.toml" >/data/log_xunqunwang/interface/interface.nohup &
     else
-		nohup $servicePath/$appdir/$app -conf "user-dev.toml" >./user.nohup &
+		nohup $servicePath/$appdir/$app -conf "interface-dev.toml" >./interface.nohup &
     fi
     echo "end..." 
 fi
