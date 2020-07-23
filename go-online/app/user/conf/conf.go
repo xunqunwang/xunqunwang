@@ -87,7 +87,7 @@ func load() (err error) {
 
 func init() {
 	// flag.StringVar(&confPath, "conf", "", "default config path")
-	flag.StringVar(&confPath, "conf", "./user-test.toml", "default config path")
+	flag.StringVar(&confPath, "conf", "./user-dev.toml", "default config path")
 }
 
 // Init int config
