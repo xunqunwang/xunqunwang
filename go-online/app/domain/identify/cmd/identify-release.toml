@@ -1,6 +1,6 @@
 # This is a TOML document. Boom.
 [Xlog]
-	dir = "/data/log_xunqunwang/domain/idenitfy/"
+	dir = "/data/log_xunqunwang/domain/identify/"
 	# dir = "./../../../../log/domain/idenitfy/"
 
 [Identify]

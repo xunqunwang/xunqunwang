@@ -1,10 +1,10 @@
 package auth
 
 import (
-	// idtv1 "go-common/app/service/main/identify/api/grpc"
 	"fmt"
 	idtv1 "go-online/app/domain/identify/api/grpc"
 	"go-online/lib/ecode"
+	"go-online/lib/log"
 	bm "go-online/lib/net/http/blademaster"
 	"go-online/lib/net/metadata"
 	"go-online/lib/net/rpc/warden"
@@ -66,9 +66,10 @@ func New(conf *Config) *Auth {
 
 // modified by wangkai
 func (a *Auth) User(ctx *bm.Context) {
-	fmt.Println("Auth:User")
+	log.Info("Auth:User")
 	req := ctx.Request
 	if req.Header.Get("access_key") != "" {
+		log.Info("Auth:User access_key:%s", req.Header.Get("access_key"))
 		a.UserWeb(ctx)
 		return
 	}
@@ -83,14 +84,14 @@ func (a *Auth) User(ctx *bm.Context) {
 
 // modified by wangkai
 func (a *Auth) UserWeb(ctx *bm.Context) {
-	fmt.Println("Auth:UserWeb")
+	log.Info("Auth:UserWeb")
 	// a.midAuth(ctx, a.AuthCookie)
 	a.midAuth(ctx, a.AuthToken)
 }
 
 // UserMobile is used to mark path as mobile access required.
 func (a *Auth) UserMobile(ctx *bm.Context) {
-	fmt.Println("Auth:UserMobile")
+	log.Info("Auth:UserMobile")
 	a.midAuth(ctx, a.AuthToken)
 }
 
@@ -98,7 +99,7 @@ func (a *Auth) UserMobile(ctx *bm.Context) {
 // If `access_key` is exist in request form, it will using mobile access policy.
 // Otherwise to web access policy.
 func (a *Auth) Guest(ctx *bm.Context) {
-	fmt.Println("Auth:Guest")
+	log.Info("Auth:Guest")
 	req := ctx.Request
 	if req.Form.Get("access_key") == "" {
 		a.GuestWeb(ctx)
@@ -109,12 +110,13 @@ func (a *Auth) Guest(ctx *bm.Context) {
 
 // GuestWeb is used to mark path as web guest policy.
 func (a *Auth) GuestWeb(ctx *bm.Context) {
-	fmt.Println("Auth:GuestWeb")
+	log.Info("Auth:GuestWeb")
 	a.guestAuth(ctx, a.AuthCookie)
 }
 
 // GuestMobile is used to mark path as mobile guest policy.
 func (a *Auth) GuestMobile(ctx *bm.Context) {
+	log.Info("Auth:GuestMobile")
 	a.guestAuth(ctx, a.AuthToken)
 }
 
@@ -141,20 +143,23 @@ func (a *Auth) GuestMobile(ctx *bm.Context) {
 
 // modified by wangkai
 func (a *Auth) AuthToken(ctx *bm.Context) (int64, error) {
-	fmt.Println("AuthToken")
+	log.Info("AuthToken")
 	req := ctx.Request
 	key := req.Header.Get("access_key")
 	if key == "" {
+		log.Error("access_key is null")
 		return 0, ecode.NoLogin
 	}
 	buvid := req.Header.Get("buvid") // buvid 移动端上报，再请求header里有，标识设备
 
 	reply, err := a.GetTokenInfo(ctx, &idtv1.GetTokenInfoReq{Token: key, Buvid: buvid})
 	if err != nil {
+		log.Error("AuthToken GetTokenInfo(%s) error(%v)", key, err)
 		return 0, err
 	}
 
 	if !reply.IsLogin {
+		log.Error("AuthToken reply  is NoLogin")
 		return 0, ecode.NoLogin
 	}
 
