@@ -124,6 +124,7 @@ func (s *Service) GetCookieInfo(c context.Context, cookie string) (res *model.Id
 func (s *Service) GetTokenInfo(c context.Context, token *v1.GetTokenInfoReq) (res *model.IdentifyInfo, err error) {
 	tokenObj := new(model.TokenObj)
 	if err = s.DB.Where("token = ?", token.Token).First(tokenObj).Error; err != nil {
+		log.Error("GetTokenInfo(%s) error(%v)", token.Token, err)
 		return
 	}
 	res = &model.IdentifyInfo{

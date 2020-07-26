@@ -153,6 +153,7 @@ func (a *Auth) AuthToken(ctx *bm.Context) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
+
 	if !reply.IsLogin {
 		return 0, ecode.NoLogin
 	}

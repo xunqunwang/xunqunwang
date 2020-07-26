@@ -76,6 +76,7 @@ func (s *server) GetTokenInfo(ctx context.Context, req *v1.GetTokenInfoReq) (*v1
 	}
 	res, err := s.svr.GetTokenInfo(ctx, token)
 	if err != nil {
+		log.Error("GetTokenInfo(%v) error(%v)", token, err)
 		if err == ecode.NoLogin {
 			return emptyTokenReply, nil
 		}

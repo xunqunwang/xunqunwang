@@ -1,4 +1,8 @@
 # This is a TOML document. Boom.
+[Xlog]
+	dir = "/data/log_xunqunwang/domain/idenitfy/"
+	# dir = "./../../../../log/domain/idenitfy/"
+
 [Identify]
 authHost = "http://passport.bilibili.co"
 # sync whith userlog databus
