@@ -39,7 +39,7 @@ IntranetCIDR = ["172.16.0.0/12", "10.0.0.0/8", "192.168.0.0/16"]
 [orm]
    	# dsn = "test:test@tcp(172.16.33.205:3308)/bilibili_lottery?timeout=5s&readTimeout=5s&writeTimeout=5s&parseTime=true&loc=Local&charset=utf8,utf8mb4"
 	# dsn = "host=176.122.178.145 port=5432 user=test dbname=testdb password=test sslmode=disable"
-	dsn = "host=139.224.73.156 port=5432 user=user_user dbname=userdb password=User.2020 sslmode=disable"
+	dsn = "host=127.0.0.1 port=5432 user=user_user dbname=userdb password=User.2020 sslmode=disable"
     	active = 5
     	idle = 5
    	idleTimeout = "4h"
