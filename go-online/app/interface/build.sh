@@ -10,7 +10,7 @@ p=$(pidof $servicePath/$appdir/$app )
 if [ $p ]
 then
     echo "kill $app pid $p"
-    kill -9 $p
+    kill $p
 fi
 
 if [[ -n "$2" && "$2" = "start" ]]
