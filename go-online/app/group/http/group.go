@@ -118,7 +118,7 @@ func addGroup(c *bm.Context) {
 	arg.CreatedTime = time.Now()
 	// 图片base64编码
 	if arg.GroupPhoto == "" {
-		picPath := "./../../../JiqGstEfoWAOHiTxclqi.png"
+		picPath := "./../../../JiqGstEfoWAOHiTxclqi.jpg"
 		if cc, err = pic.Base64Encoding(picPath); err != nil {
 			log.Error("pic.base64Encoding(%s,%d) error(%v)", picPath, arg.GroupID, err)
 			c.JSON(nil, err)
@@ -153,7 +153,7 @@ func saveGroup(c *bm.Context) {
 	userId, _ := strconv.ParseInt(mid, 10, 64)
 	arg.UID = userId
 	if arg.GroupPhoto == "" {
-		picPath := "./../../../JiqGstEfoWAOHiTxclqi.png"
+		picPath := "./../../../JiqGstEfoWAOHiTxclqi.jpg"
 		if cc, err = pic.Base64Encoding(picPath); err != nil {
 			log.Error("pic.base64Encoding(%s,%d) error(%v)", picPath, arg.GroupID, err)
 			c.JSON(nil, err)
