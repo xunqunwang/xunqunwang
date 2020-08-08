@@ -7,6 +7,7 @@ import (
 type GroupParam struct {
 	Page       int      `json:"pn" form:"pn" default:"0"`
 	Size       int      `json:"ps" form:"ps" default:"0"`
+	Keys       []string `json:"keys" form:"keys,split"`
 	GroupIDs   []int64  `json:"group_ids" form:"group_ids,split"`
 	UIDs       []int64  `json:"uids" form:"uids,split"`
 	GroupNames []string `json:"group_names" form:"group_names,split"`

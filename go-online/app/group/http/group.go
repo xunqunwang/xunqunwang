@@ -22,6 +22,24 @@ func groupList(c *bm.Context) {
 		return
 	}
 	db := actSrv.DB
+	if len(arg.Keys) != 0 {
+		for i, v := range arg.Keys {
+			key := "%" + v + "%"
+			if i == 0 {
+				db = db.Where("group_name like ?", key).
+					Or("owner like ?", key).
+					Or("owner_description like ?", key).
+					Or("group_description like ?", key).
+					Or("group_detail like ?", key)
+				continue
+			}
+			db = db.Or("group_name like ?", key).
+				Or("owner like ?", key).
+				Or("owner_description like ?", key).
+				Or("group_description like ?", key).
+				Or("group_detail like ?", key)
+		}
+	}
 	if len(arg.GroupIDs) != 0 {
 		db = db.Where("group_id in (?)", arg.GroupIDs)
 	}
