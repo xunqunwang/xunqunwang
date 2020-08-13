@@ -14,7 +14,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&confPath, "conf", "", "default config path")
+	flag.StringVar(&confPath, "conf", "../conf", "default config path")
 }
 
 // Init init config client.

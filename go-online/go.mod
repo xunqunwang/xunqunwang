@@ -9,10 +9,13 @@ require (
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/protobuf v1.4.0
+	github.com/google/wire v0.4.0
 	github.com/hashicorp/consul/api v1.5.0
 	github.com/jinzhu/gorm v1.9.12
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/micro/go-micro/v2 v2.9.1
+	github.com/naoina/go-stringutil v0.1.0 // indirect
+	github.com/naoina/toml v0.1.1
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.5.1
 	github.com/sirupsen/logrus v1.5.0

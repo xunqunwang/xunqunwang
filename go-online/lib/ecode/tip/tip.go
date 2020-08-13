@@ -20,13 +20,15 @@ import (
 const (
 	_codeOk          = 0
 	_codeNotModified = -304
-	_checkURL        = "http://%s/x/v1/msm/codes/2"
+	// _checkURL        = "http://%s/x/v1/msm/codes/2"
+	_checkURL = "http://%s/v1/admin/err/list"
 )
 
 var (
 	defualtEcodes = &ecodes{}
 	defaultConfig = &Config{
-		Domain: "api.xunqunwang.co",
+		// Domain: "api.xunqunwang.co",
+		Domain: "127.0.0.1:8088",
 		All:    xtime.Duration(time.Hour),
 		Diff:   xtime.Duration(time.Minute * 5),
 		ClientConfig: &xhttp.ClientConfig{

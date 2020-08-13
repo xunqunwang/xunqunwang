@@ -125,6 +125,7 @@ func (s *Service) GetTokenInfo(c context.Context, token *v1.GetTokenInfoReq) (re
 	tokenObj := new(model.TokenObj)
 	if err = s.DB.Where("token = ?", token.Token).First(tokenObj).Error; err != nil {
 		log.Error("GetTokenInfo(%s) error(%v)", token.Token, err)
+		err = ecode.NoLogin
 		return
 	}
 	res = &model.IdentifyInfo{

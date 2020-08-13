@@ -2,16 +2,16 @@ package main
 
 import (
 	"flag"
-	"os"
-	"time"
-
 	"go-online/app/user/conf"
 	"go-online/app/user/http"
 	"go-online/app/user/service"
+	"go-online/lib/ecode/tip"
 	"go-online/lib/log"
 	"go-online/lib/net/trace"
 	"go-online/lib/os/signal"
 	"go-online/lib/syscall"
+	"os"
+	"time"
 )
 
 var (
@@ -28,6 +28,7 @@ func main() {
 	defer log.Close()
 	trace.Init(conf.Conf.Tracer)
 	defer trace.Close()
+	tip.Init(nil)
 	s = service.New(conf.Conf)
 	http.Init(conf.Conf, s)
 	log.Info("admin start")

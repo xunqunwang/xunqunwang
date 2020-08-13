@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	"flag"
+	"go-online/app/domain/identify/conf"
+	"go-online/app/domain/identify/server/gorpc"
+	"go-online/lib/ecode/tip"
 	"go-online/lib/syscall"
 	"os"
 	"os/signal"
 	"time"
-
-	"go-online/app/domain/identify/conf"
-	"go-online/app/domain/identify/server/gorpc"
 
 	// "go-online/app/domain/identify/server/grpc"
 	"go-online/app/domain/identify/server/http"
@@ -44,6 +44,7 @@ func main() {
 	// trace.Init(conf.Conf.Tracer)
 	// defer trace.Close()
 	// service init
+	tip.Init(nil)
 	svr = service.New(conf.Conf)
 	http.Init(conf.Conf, svr)
 

@@ -8,6 +8,8 @@
 # ./deploy.sh release stop 生产部署模式下关闭所有微服务
 
 prjPath=`pwd`
+bash $prjPath/app/admin/err/build.sh $1 $2
+cd $prjPath
 bash $prjPath/app/domain/identify/build.sh $1 $2
 cd $prjPath
 bash $prjPath/app/user/build.sh $1 $2
