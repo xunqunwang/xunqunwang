@@ -10,7 +10,8 @@ import (
 )
 
 var (
-	CurrentVer int64 = 1
+	CurrentVer int64  = 1
+	CurrentMd5 string = ""
 )
 
 // func (s *Service) GetEcodeList() (list []*model.Ecode, err error) {
@@ -43,11 +44,11 @@ func (s *Service) GetEcodeList(ver int64) (data *model.EcodeData, err error) {
 		return
 	}
 	mb := md5.Sum(bytes)
-	data.MD5 = hex.EncodeToString(mb[:])
-	// data = map[string]interface{}{
-	// 	"list": list,
-	// 	"Code": code,
-	// 	"MD5":  md,
-	// }
+	md5 := hex.EncodeToString(mb[:])
+	if CurrentMd5 != md5 {
+		CurrentVer += 1
+		CurrentMd5 = md5
+	}
+	data.MD5 = md5
 	return
 }

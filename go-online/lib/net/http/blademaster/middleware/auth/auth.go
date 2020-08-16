@@ -2,7 +2,7 @@ package auth
 
 import (
 	"fmt"
-	idtv1 "go-online/app/domain/identify/api/grpc"
+	idtv1 "go-online/app/domain/identify/api"
 	"go-online/lib/ecode"
 	"go-online/lib/log"
 	bm "go-online/lib/net/http/blademaster"

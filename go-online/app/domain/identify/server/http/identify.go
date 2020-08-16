@@ -1,7 +1,7 @@
 package http
 
 import (
-	"go-online/app/domain/identify/api/grpc"
+	v1 "go-online/app/domain/identify/api"
 	"go-online/lib/ecode"
 	bm "go-online/lib/net/http/blademaster"
 )
@@ -17,11 +17,11 @@ func accessCookie(c *bm.Context) {
 		c.JSON(nil, ecode.NoLogin)
 		return
 	}
-	res, err := srv.GetCookieInfo(c, cookie)
-	if err == nil {
-		c.Set("mid", res.Mid)
-	}
-	c.JSON(res, err)
+	// res, err := actSrv.GetCookieInfo(c, cookie)
+	// if err == nil {
+	// 	c.Set("mid", res.Mid)
+	// }
+	// c.JSON(res, err)
 }
 
 func accessToken(c *bm.Context) {
@@ -30,7 +30,7 @@ func accessToken(c *bm.Context) {
 		c.JSON(nil, ecode.NoLogin)
 		return
 	}
-	res, err := srv.GetTokenInfo(c, token)
+	res, err := actSrv.GetTokenInfo(c, token)
 	if err == nil {
 		c.Set("mid", res.Mid)
 	}

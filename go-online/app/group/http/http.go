@@ -35,6 +35,7 @@ func route(e *bm.Engine) {
 	{
 		gapp := g.Group("/group")
 		{
+			gapp.GET("my_list", myGroupList)
 			gapp.GET("/list", groupList)
 			gapp.GET("/info", groupInfo)
 			gapp.POST("/add", addGroup)

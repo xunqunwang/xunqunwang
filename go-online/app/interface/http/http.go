@@ -52,6 +52,7 @@ func route(e *bm.Engine) {
 		}
 		gapp := g.Group("/group")
 		{
+			gapp.GET("my_list", authSvc.User, verifySvc.Verify, proxyHandler)
 			gapp.GET("/list", authSvc.Guest, verifySvc.Verify, proxyHandler)
 			gapp.GET("/info", authSvc.Guest, verifySvc.Verify, proxyHandler)
 			gapp.POST("/add", authSvc.User, verifySvc.Verify, proxyHandler)

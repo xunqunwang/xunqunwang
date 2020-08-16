@@ -1,16 +1,21 @@
 package http
 
 import (
-	"go-online/app/admin/err/service"
-
+	pb "go-online/app/domain/identify/api"
+	"go-online/app/domain/identify/service"
 	"go-online/lib/conf/paladin"
+	"go-online/lib/log"
 	bm "go-online/lib/net/http/blademaster"
+	"net/http"
 )
 
-var actSrv *service.Service
+var (
+	actSrv *service.Service
+	svc    pb.IdentifyServer
+)
 
 // New new a bm server.
-func New(s *service.Service) (engine *bm.Engine, err error) {
+func New(s pb.IdentifyServer) (engine *bm.Engine, err error) {
 	var (
 		cfg bm.ServerConfig
 		ct  paladin.TOML
@@ -21,8 +26,10 @@ func New(s *service.Service) (engine *bm.Engine, err error) {
 	if err = ct.Get("Server").UnmarshalTOML(&cfg); err != nil {
 		return
 	}
-	actSrv = s
+	actSrv = s.(*service.Service)
+	svc = s
 	engine = bm.DefaultServer(&cfg)
+	pb.RegisterIdentifyBMServer(engine, s)
 	initRouter(engine)
 	if err = engine.Start(); err != nil {
 		return
@@ -32,15 +39,17 @@ func New(s *service.Service) (engine *bm.Engine, err error) {
 
 func initRouter(e *bm.Engine) {
 	e.Ping(ping)
-	g := e.Group("/v1/admin/err")
+	group := e.Group("/x/internal/identify")
 	{
-		g.GET("/list", getEcodes)
+		group.GET("cookie", accessCookie)
+		group.GET("token", accessToken)
+		group.GET("cache/del", delCache)
 	}
 }
 
 func ping(c *bm.Context) {
 	if err := actSrv.Ping(c); err != nil {
-		c.Error = err
-		c.AbortWithStatus(503)
+		log.Error("ping error(%v)", err)
+		c.AbortWithStatus(http.StatusServiceUnavailable)
 	}
 }

@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/dgryski/go-farm v0.0.0-20200201041132-a6ae2369ad13
+	github.com/go-kratos/kratos v0.5.0
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/gogo/protobuf v1.3.1
@@ -21,6 +22,6 @@ require (
 	github.com/sirupsen/logrus v1.5.0
 	golang.org/x/net v0.0.0-20200520182314-0ba52f642ac2
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0
-	google.golang.org/grpc v1.28.0
+	google.golang.org/grpc v1.28.1
 	gopkg.in/go-playground/validator.v9 v9.31.0
 )

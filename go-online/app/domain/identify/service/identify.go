@@ -2,14 +2,14 @@ package service
 
 import (
 	"context"
-	"net/url"
-	"time"
+	// "net/url"
+	// "time"
 
-	"go-online/app/domain/identify/api/grpc"
+	v1 "go-online/app/domain/identify/api"
 	"go-online/app/domain/identify/model"
 	"go-online/lib/ecode"
 	"go-online/lib/log"
-	"go-online/lib/net/metadata"
+	// "go-online/lib/net/metadata"
 )
 
 const (
@@ -27,61 +27,67 @@ var (
 )
 
 // GetCookieInfo verify user info by cookie.
-func (s *Service) GetCookieInfo(c context.Context, cookie string) (res *model.IdentifyInfo, err error) {
-	var cache = true
-	ssda := readCookiesVal(cookie, _CookieSessionField)[0]
-	if ssda == "" {
-		err = ecode.NoLogin
-		return
-	}
-	ssda, err = url.QueryUnescape(ssda)
-	if err != nil {
-		log.Error("cookie (%s , %s) QueryUnescape error(%v)", cookie, ssda, err)
-		err = ecode.RequestErr
-		return
-	}
+// func (s *Service) GetCookieInfo(c context.Context, cookie string) (res *model.IdentifyInfo, err error) {
+// 	var cache = true
+// 	ssda := readCookiesVal(cookie, _CookieSessionField)[0]
+// 	if ssda == "" {
+// 		err = ecode.NoLogin
+// 		return
+// 	}
+// 	ssda, err = url.QueryUnescape(ssda)
+// 	if err != nil {
+// 		log.Error("cookie (%s , %s) QueryUnescape error(%v)", cookie, ssda, err)
+// 		err = ecode.RequestErr
+// 		return
+// 	}
 
-	// from cache
-	if res, err = s.d.AccessCache(c, ssda); err != nil {
-		cache = false
-	}
-	if res != nil {
-		if res.Mid == _noLoginMid {
-			// check if is no login mid cache
-			err = ecode.NoLogin
-			return
-		}
-		//get buvid3 from cookie
-		buvid3 := readCookiesVal(cookie, _CookieBuvidField)[0]
-		s.loginLog(res.Mid, metadata.String(c, metadata.RemoteIP), metadata.String(c, metadata.RemotePort), buvid3)
-		return
-	}
-	noLoginCache := false
-	// from passport
-	if res, err = s.d.AccessCookie(c, cookie); err != nil {
-		if err != ecode.NoLogin && err != ecode.AccessKeyErr {
-			return
-		}
-		noLoginCache = true
-	} else if res.Expires < int32(time.Now().Unix()) {
-		noLoginCache = true
-	}
-	if noLoginCache {
-		res = _noLoginIdentify
-	}
-	if cache && res != nil {
-		s.cache.Save(func() {
-			s.d.SetAccessCache(context.Background(), ssda, res)
-		})
-		// if cache err or res nil, don't call addLoginLog
-		//get buvid3 from cookie
-		buvid3 := readCookiesVal(cookie, _CookieBuvidField)[0]
-		s.loginLog(res.Mid, metadata.String(c, metadata.RemoteIP), metadata.String(c, metadata.RemotePort), buvid3)
-	}
-	if res.Mid == _noLoginMid {
-		err = ecode.NoLogin
-		return
-	}
+// 	// from cache
+// 	if res, err = s.d.AccessCache(c, ssda); err != nil {
+// 		cache = false
+// 	}
+// 	if res != nil {
+// 		if res.Mid == _noLoginMid {
+// 			// check if is no login mid cache
+// 			err = ecode.NoLogin
+// 			return
+// 		}
+// 		//get buvid3 from cookie
+// 		buvid3 := readCookiesVal(cookie, _CookieBuvidField)[0]
+// 		s.loginLog(res.Mid, metadata.String(c, metadata.RemoteIP), metadata.String(c, metadata.RemotePort), buvid3)
+// 		return
+// 	}
+// 	noLoginCache := false
+// 	// from passport
+// 	if res, err = s.d.AccessCookie(c, cookie); err != nil {
+// 		if err != ecode.NoLogin && err != ecode.AccessKeyErr {
+// 			return
+// 		}
+// 		noLoginCache = true
+// 	} else if res.Expires < int32(time.Now().Unix()) {
+// 		noLoginCache = true
+// 	}
+// 	if noLoginCache {
+// 		res = _noLoginIdentify
+// 	}
+// 	if cache && res != nil {
+// 		s.cache.Save(func() {
+// 			s.d.SetAccessCache(context.Background(), ssda, res)
+// 		})
+// 		// if cache err or res nil, don't call addLoginLog
+// 		//get buvid3 from cookie
+// 		buvid3 := readCookiesVal(cookie, _CookieBuvidField)[0]
+// 		s.loginLog(res.Mid, metadata.String(c, metadata.RemoteIP), metadata.String(c, metadata.RemotePort), buvid3)
+// 	}
+// 	if res.Mid == _noLoginMid {
+// 		err = ecode.NoLogin
+// 		return
+// 	}
+// 	return
+// }
+
+// GetCookieInfo verify user info by cookie.
+func (s *Service) GetCookieInfo(c context.Context, req *v1.GetCookieInfoReq) (res *v1.GetCookieInfoReply, err error) {
+	res = new(v1.GetCookieInfoReply)
 	return
 }
 
@@ -121,47 +127,61 @@ func (s *Service) GetCookieInfo(c context.Context, cookie string) (res *model.Id
 // }
 
 // modified by wangkai
-func (s *Service) GetTokenInfo(c context.Context, token *v1.GetTokenInfoReq) (res *model.IdentifyInfo, err error) {
+// func (s *Service) GetTokenInfo(c context.Context, token *v1.GetTokenInfoReq) (res *model.IdentifyInfo, err error) {
+// 	tokenObj := new(model.TokenObj)
+// 	if err = s.DB.Where("token = ?", token.Token).First(tokenObj).Error; err != nil {
+// 		log.Error("GetTokenInfo(%s) error(%v)", token.Token, err)
+// 		err = ecode.NoLogin
+// 		return
+// 	}
+// 	res = &model.IdentifyInfo{
+// 		Mid: tokenObj.UserId,
+// 	}
+// 	return
+// }
+
+// modified by wangkai
+func (s *Service) GetTokenInfo(c context.Context, req *v1.GetTokenInfoReq) (res *v1.GetTokenInfoReply, err error) {
 	tokenObj := new(model.TokenObj)
-	if err = s.DB.Where("token = ?", token.Token).First(tokenObj).Error; err != nil {
-		log.Error("GetTokenInfo(%s) error(%v)", token.Token, err)
+	if err = s.DB.Where("token = ?", req.Token).First(tokenObj).Error; err != nil {
+		log.Error("GetTokenInfo(%s) error(%v)", req.Token, err)
 		err = ecode.NoLogin
 		return
 	}
-	res = &model.IdentifyInfo{
-		Mid: tokenObj.UserId,
-	}
-	return
+	return &v1.GetTokenInfoReply{
+		IsLogin: true,
+		Mid:     tokenObj.UserId,
+	}, nil
 }
 
 // DelCache delete access cache when user change pwd or logout.
-func (s *Service) DelCache(c context.Context, key string) (err error) {
-	return s.d.DelCache(c, key)
-}
+// func (s *Service) DelCache(c context.Context, key string) (err error) {
+// 	return s.d.DelCache(c, key)
+// }
 
 // SetCache delete access cache when user change pwd or logout.
-func (s *Service) SetCache(c context.Context, key string, res *model.IdentifyInfo) (err error) {
-	s.d.SetAccessCache(c, key, res)
-	return
-}
+// func (s *Service) SetCache(c context.Context, key string, res *model.IdentifyInfo) (err error) {
+// 	s.d.SetAccessCache(c, key, res)
+// 	return
+// }
 
-func (s *Service) loginLog(mid int64, ip string, ipport string, buvid string) {
-	if mid <= 0 || ip == "" {
-		return
-	}
-	s.addLoginLog(func() {
-		if ok, err := s.d.ExistMIDAndIP(context.Background(), mid, ip); err != nil {
-			return
-		} else if ok {
-			return
-		}
-		if s.isIntranetIP(ip) {
-			s.d.SetLoginCache(context.Background(), mid, ip, s.loginCacheExpires)
-			log.Warn("user ip error %s", ip)
-			return
-		}
-		if err := s.loginLogDataBus.Send(context.Background(), ip, model.NewLoginLog(mid, ip, ipport, buvid)); err == nil {
-			s.d.SetLoginCache(context.Background(), mid, ip, s.loginCacheExpires)
-		}
-	})
-}
+// func (s *Service) loginLog(mid int64, ip string, ipport string, buvid string) {
+// 	if mid <= 0 || ip == "" {
+// 		return
+// 	}
+// 	s.addLoginLog(func() {
+// 		if ok, err := s.d.ExistMIDAndIP(context.Background(), mid, ip); err != nil {
+// 			return
+// 		} else if ok {
+// 			return
+// 		}
+// 		if s.isIntranetIP(ip) {
+// 			s.d.SetLoginCache(context.Background(), mid, ip, s.loginCacheExpires)
+// 			log.Warn("user ip error %s", ip)
+// 			return
+// 		}
+// 		if err := s.loginLogDataBus.Send(context.Background(), ip, model.NewLoginLog(mid, ip, ipport, buvid)); err == nil {
+// 			s.d.SetLoginCache(context.Background(), mid, ip, s.loginCacheExpires)
+// 		}
+// 	})
+// }

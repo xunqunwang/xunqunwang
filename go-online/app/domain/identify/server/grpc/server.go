@@ -1,91 +1,29 @@
 package grpc
 
 import (
-	"context"
-	"fmt"
-
-	"go-online/app/domain/identify/api/grpc"
-	"go-online/app/domain/identify/service"
-	"go-online/lib/ecode"
-	"go-online/lib/log"
-	"go-online/lib/net/metadata"
+	pb "go-online/app/domain/identify/api"
+	"go-online/app/domain/identify/dao"
+	"go-online/lib/conf/paladin"
 	"go-online/lib/net/rpc/warden"
-
-	"google.golang.org/grpc"
 )
 
-// New Identify warden rpc server
-func New(cfg *warden.ServerConfig, s *service.Service) *warden.Server {
-	w := warden.NewServer(cfg)
-	w.Use(func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
-		if resp, err = handler(ctx, req); err != nil {
-			log.Infov(ctx,
-				log.KV("path", info.FullMethod),
-				log.KV("caller", metadata.String(ctx, metadata.Caller)),
-				log.KV("args", fmt.Sprintf("%v", req)),
-				log.KV("args", fmt.Sprintf("%+v", err)))
-		}
+// New new a grpc server.
+func New(svc pb.IdentifyServer) (ws *warden.Server, cf func(), err error) {
+	var (
+		cfg warden.ServerConfig
+		ct  paladin.TOML
+	)
+	if err = paladin.Get("grpc.toml").Unmarshal(&ct); err != nil {
 		return
-	})
-	v1.RegisterIdentifyServer(w.Server(), &server{s})
-	ws, err := w.Start()
-	if err != nil {
-		panic(err)
 	}
-	return ws
-}
-
-type server struct {
-	svr *service.Service
-}
-
-var _ v1.IdentifyServer = &server{}
-var (
-	emptyCookieReply = &v1.GetCookieInfoReply{
-		IsLogin: false,
+	if err = ct.Get("Server").UnmarshalTOML(&cfg); err != nil {
+		return
 	}
-
-	emptyTokenReply = &v1.GetTokenInfoReply{
-		IsLogin: false,
+	ws = warden.NewServer(&cfg)
+	pb.RegisterIdentifyServer(ws.Server(), svc)
+	if ws, err = ws.Start(); err != nil {
+		return
 	}
-)
-
-// CookieInfo verify user info by cookie.
-func (s *server) GetCookieInfo(ctx context.Context, req *v1.GetCookieInfoReq) (*v1.GetCookieInfoReply, error) {
-	res, err := s.svr.GetCookieInfo(ctx, req.GetCookie())
-	if err != nil {
-		if err == ecode.NoLogin {
-			return emptyCookieReply, nil
-		}
-		return nil, err
-	}
-
-	return &v1.GetCookieInfoReply{
-		IsLogin: true,
-		Mid:     res.Mid,
-		Expires: res.Expires,
-		Csrf:    res.Csrf,
-	}, nil
-}
-
-// TokenInfo verify user info by token.
-func (s *server) GetTokenInfo(ctx context.Context, req *v1.GetTokenInfoReq) (*v1.GetTokenInfoReply, error) {
-	token := &v1.GetTokenInfoReq{
-		Buvid: req.Buvid,
-		Token: req.Token,
-	}
-	res, err := s.svr.GetTokenInfo(ctx, token)
-	if err != nil {
-		log.Error("GetTokenInfo(%v) error(%v)", token, err)
-		if err == ecode.NoLogin {
-			return emptyTokenReply, nil
-		}
-		return nil, err
-	}
-	return &v1.GetTokenInfoReply{
-		IsLogin: true,
-		Mid:     res.Mid,
-		Expires: res.Expires,
-		Csrf:    res.Csrf,
-	}, nil
+	cf, err = dao.RegisterToConsul("grpc", cfg.Addr)
+	return
 }

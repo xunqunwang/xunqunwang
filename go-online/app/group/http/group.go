@@ -11,6 +11,21 @@ import (
 	"time"
 )
 
+func myGroupList(c *bm.Context) {
+	var (
+		err  error
+		list []*model.Group
+	)
+	mid := c.Request.Header.Get("mid")
+	uid, _ := strconv.ParseInt(mid, 10, 64)
+	if err = actSrv.DB.Where("uid = ?", uid).Find(&list).Error; err != nil {
+		log.Error("myGroupList(%d) error(%v)", uid, err)
+		c.JSON(nil, err)
+		return
+	}
+	c.JSON(list, nil)
+}
+
 func groupList(c *bm.Context) {
 	var (
 		err   error

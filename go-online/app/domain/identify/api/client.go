@@ -10,7 +10,7 @@ func main() {
 	resolver.Register(discovery.New(nil))
 }
 */
-package v1
+package api
 
 import (
 	"context"
