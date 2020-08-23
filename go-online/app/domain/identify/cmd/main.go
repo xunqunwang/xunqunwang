@@ -34,7 +34,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	// signal handler
 	signalHandler()
 }
 

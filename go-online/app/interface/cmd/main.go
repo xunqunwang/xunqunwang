@@ -2,12 +2,12 @@ package main
 
 import (
 	"flag"
-	"go-online/app/interface/conf"
-	"go-online/app/interface/http"
-	"go-online/app/interface/service"
+	"go-online/app/interface/di"
+	"go-online/lib/conf/paladin"
 	"go-online/lib/ecode/tip"
 	"go-online/lib/log"
-	"go-online/lib/net/trace"
+
+	// "go-online/lib/net/trace"
 	"go-online/lib/os/signal"
 	"go-online/lib/syscall"
 	"os"
@@ -15,23 +15,23 @@ import (
 )
 
 var (
-	s *service.Service
+	closeFunc func()
 )
 
 func main() {
+	var err error
 	flag.Parse()
-	if err := conf.Init(); err != nil {
-		log.Error("conf.Init() error(%v)", err)
+	log.Init(nil)
+	defer log.Close()
+	log.Info("admin start")
+	// trace.Init(conf.Conf.Tracer)
+	// defer trace.Close()
+	paladin.Init()
+	tip.Init(nil)
+	_, closeFunc, err = di.InitApp()
+	if err != nil {
 		panic(err)
 	}
-	log.Init(conf.Conf.Log)
-	defer log.Close()
-	trace.Init(conf.Conf.Tracer)
-	defer trace.Close()
-	tip.Init(nil)
-	s = service.New(conf.Conf)
-	http.Init(conf.Conf, s)
-	log.Info("admin start")
 	signalHandler()
 }
 
@@ -42,12 +42,11 @@ func signalHandler() {
 	signal.Notify(ch, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT)
 	for {
 		si := <-ch
+		log.Info("get a signal %s", si.String())
 		switch si {
 		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGSTOP, syscall.SIGINT:
-			time.Sleep(time.Second * 2)
-			log.Info("get a signal %s, stop the admin process", si.String())
-			s.Close()
-			s.Wait()
+			closeFunc()
+			log.Info("interface exit")
 			time.Sleep(time.Second)
 			return
 		case syscall.SIGHUP:

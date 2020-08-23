@@ -1,35 +1,37 @@
 package http
 
 import (
-	"go-online/app/group/conf"
 	"go-online/app/group/service"
-
-	// "go-online/app/group/service/kfc"
-	"go-online/lib/log"
+	"go-online/lib/conf/paladin"
 	bm "go-online/lib/net/http/blademaster"
-	"go-online/lib/net/http/blademaster/middleware/permit"
 )
 
 var (
-	actSrv  *service.Service
-	authSrv *permit.Permit
-	// kfcSrv  *kfc.Service
+	actSrv *service.Service
 )
 
-// Init init http sever instance.
-func Init(c *conf.Config, s *service.Service) {
-	actSrv = s
-	// kfcSrv = kfc.New(c)
-	authSrv = permit.New(c.Auth)
-	engine := bm.DefaultServer(c.HTTPServer)
-	route(engine)
-	if err := engine.Start(); err != nil {
-		log.Error("httpx.Serve error(%v)", err)
-		panic(err)
+// New new a bm server.
+func New(s *service.Service) (engine *bm.Engine, err error) {
+	var (
+		cfg bm.ServerConfig
+		ct  paladin.TOML
+	)
+	if err = paladin.Get("http.toml").Unmarshal(&ct); err != nil {
+		return
 	}
+	if err = ct.Get("Server").UnmarshalTOML(&cfg); err != nil {
+		return
+	}
+	actSrv = s
+	engine = bm.DefaultServer(&cfg)
+	initRouter(engine)
+	if err = engine.Start(); err != nil {
+		return
+	}
+	return
 }
 
-func route(e *bm.Engine) {
+func initRouter(e *bm.Engine) {
 	e.Ping(ping)
 	g := e.Group("/v1/admin")
 	{

@@ -147,6 +147,9 @@ func (e *ecodes) update(ver int64) (lver int64, err error) {
 		err = cmcd.Int(res.Code)
 		return
 	}
+	if res.Data.Ver == ver {
+		return res.Data.Ver, nil
+	}
 	if bytes, err = json.Marshal(res.Data.Code); err != nil {
 		return
 	}

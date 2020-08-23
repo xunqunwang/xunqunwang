@@ -23,9 +23,9 @@ then
     echo "$app starting..."
     if [[ -n "$1" && "$1" = "release" ]]
     then
-		nohup $servicePath/$appdir/$app -conf "group-release.toml" >/data/log_xunqunwang/group/group.nohup &
+		nohup $servicePath/$appdir/$app -conf ../conf -log.dir /data/log_xunqunwang/group/ >/data/log_xunqunwang/group/group.nohup &
     else
-		nohup $servicePath/$appdir/$app -conf "group-dev.toml" >./group.nohup &
+		nohup $servicePath/$appdir/$app -conf ../conf -log.dir ./../../../log/group/ >./../../../log/group/group.nohup &
     fi
     echo "end..." 
 fi

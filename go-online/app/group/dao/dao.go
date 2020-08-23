@@ -3,61 +3,48 @@ package dao
 import (
 	"context"
 
-	"go-online/app/group/conf"
-	"go-online/lib/database/orm"
-	xhttp "go-online/lib/net/http/blademaster"
+	"go-online/lib/conf/paladin"
+	"go-online/lib/sync/pipeline/fanout"
+	xtime "go-online/lib/time"
+	"time"
+
+	"github.com/google/wire"
 
 	"github.com/jinzhu/gorm"
 )
 
-const (
-	_actURLAddTags = "/x/internal/tag/activity/add"
-	_songsURL      = "/x/internal/v1/audio/songs/activity/filter/info"
-)
+var Provider = wire.NewSet(New, NewDB)
 
 // Dao struct user of Dao.
 type Dao struct {
-	c             *conf.Config
-	DB            *gorm.DB
-	client        *xhttp.Client
-	actURLAddTags string
-	songsURL      string
+	DB     *gorm.DB
+	cache  *fanout.Fanout
+	expire int32
 }
 
 // New create a instance of Dao and return.
-func New(c *conf.Config) (d *Dao) {
+func New(db *gorm.DB) (d *Dao, cf func(), err error) {
+	var cfg struct {
+		Expire xtime.Duration
+	}
+	if err = paladin.Get("application.toml").UnmarshalTOML(&cfg); err != nil {
+		return
+	}
 	d = &Dao{
-		c:             c,
-		DB:            orm.NewPostgreSQL(c.ORM),
-		client:        xhttp.NewClient(c.HTTPClient),
-		actURLAddTags: c.Host.API + _actURLAddTags,
-		songsURL:      c.Host.API + _songsURL,
+		DB:     db,
+		cache:  fanout.New("cache"),
+		expire: int32(time.Duration(cfg.Expire) / time.Second),
 	}
-	d.initORM()
+	cf = d.Close
 	return
-}
-
-func (d *Dao) initORM() {
-	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
-		if defaultTableName == "act_matchs" {
-			return defaultTableName
-		}
-		return defaultTableName
-	}
-	d.DB.LogMode(true)
 }
 
 // Ping check connection of db , mc.
 func (d *Dao) Ping(c context.Context) (err error) {
-	if d.DB != nil {
-		err = d.DB.DB().PingContext(c)
-	}
-	return
+	return nil
 }
 
 // Close close connection of db , mc.
 func (d *Dao) Close() {
-	if d.DB != nil {
-		d.DB.Close()
-	}
+	d.cache.Close()
 }

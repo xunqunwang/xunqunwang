@@ -5,32 +5,19 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"go-online/app/admin/err/model"
-	"go-online/lib/ecode"
 	"go-online/lib/log"
 )
 
 var (
-	CurrentVer int64  = 1
+	CurrentVer int64  = 0
 	CurrentMd5 string = ""
 )
-
-// func (s *Service) GetEcodeList() (list []*model.Ecode, err error) {
-// 	if err = s.dao.DB.Find(&list).Error; err != nil {
-// 		log.Error("GetEcodeList error(%v)", err)
-// 		return
-// 	}
-// 	return
-// }
 
 func (s *Service) GetEcodeList(ver int64) (data *model.EcodeData, err error) {
 	var (
 		list  []*model.Ecode
 		bytes []byte
 	)
-	if ver == CurrentVer {
-		err = ecode.NotModified
-		return
-	}
 	if err = s.dao.DB.Find(&list).Error; err != nil {
 		log.Error("GetEcodeList error(%v)", err)
 		return
@@ -50,5 +37,6 @@ func (s *Service) GetEcodeList(ver int64) (data *model.EcodeData, err error) {
 		CurrentMd5 = md5
 	}
 	data.MD5 = md5
+	data.Ver = CurrentVer
 	return
 }

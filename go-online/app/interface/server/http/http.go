@@ -1,14 +1,11 @@
 package http
 
 import (
-	"go-online/app/interface/conf"
 	"go-online/app/interface/service"
 
-	// "go-online/app/interface/service/kfc"
-	"go-online/lib/log"
+	"go-online/lib/conf/paladin"
 	bm "go-online/lib/net/http/blademaster"
 
-	// "go-online/lib/net/http/blademaster/middleware/permit"
 	"go-online/lib/net/http/blademaster/middleware/auth"
 	"go-online/lib/net/http/blademaster/middleware/proxy"
 	"go-online/lib/net/http/blademaster/middleware/verify"
@@ -18,30 +15,37 @@ var (
 	verifySvc *verify.Verify
 	authSvc   *auth.Auth
 	actSrv    *service.Service
-	// authSrv *permit.Permit
 	// kfcSrv  *kfc.Service
 )
 
-// Init init http sever instance.
-func Init(c *conf.Config, s *service.Service) {
-	actSrv = s
-	// kfcSrv = kfc.New(c)
-	// authSrv = permit.New(c.Auth)
-	initMiddleware(c)
-	engine := bm.DefaultServer(c.HTTPServer)
-	route(engine)
-	if err := engine.Start(); err != nil {
-		log.Error("httpx.Serve error(%v)", err)
-		panic(err)
+// New new a bm server.
+func New(s *service.Service) (engine *bm.Engine, err error) {
+	var (
+		cfg bm.ServerConfig
+		ct  paladin.TOML
+	)
+	if err = paladin.Get("http.toml").Unmarshal(&ct); err != nil {
+		return
 	}
+	if err = ct.Get("Server").UnmarshalTOML(&cfg); err != nil {
+		return
+	}
+	actSrv = s
+	initMiddleware()
+	engine = bm.DefaultServer(&cfg)
+	initRouter(engine)
+	if err = engine.Start(); err != nil {
+		return
+	}
+	return
 }
 
-func initMiddleware(c *conf.Config) {
+func initMiddleware() {
 	verifySvc = verify.New(nil)
 	authSvc = auth.New(nil)
 }
 
-func route(e *bm.Engine) {
+func initRouter(e *bm.Engine) {
 	e.Ping(ping)
 	proxyHandler := proxy.NewZoneProxy("sh001", "http://127.0.0.1:8000")
 	g := e.Group("/v1/admin")

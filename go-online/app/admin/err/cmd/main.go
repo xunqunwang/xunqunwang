@@ -29,7 +29,7 @@ func main() {
 		switch s {
 		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
 			closeFunc()
-			log.Info("kratos-demo exit")
+			log.Info("admin-err exit")
 			time.Sleep(time.Second)
 			return
 		case syscall.SIGHUP:
