@@ -20,7 +20,7 @@ func Trace() HandlerFunc {
 		t, err := trace.Extract(trace.HTTPFormat, c.Request.Header)
 		if err != nil {
 			var opts []trace.Option
-			if ok, _ := strconv.ParseBool(trace.BiliTraceDebug); ok {
+			if ok, _ := strconv.ParseBool(trace.KratosTraceDebug); ok {
 				opts = append(opts, trace.EnableDebug())
 			}
 			t = trace.New(c.Request.URL.Path, opts...)
@@ -30,7 +30,12 @@ func Trace() HandlerFunc {
 		t.SetTag(trace.String(trace.TagHTTPMethod, c.Request.Method))
 		t.SetTag(trace.String(trace.TagHTTPURL, c.Request.URL.String()))
 		t.SetTag(trace.String(trace.TagSpanKind, "server"))
+		// business tag
 		t.SetTag(trace.String("caller", metadata.String(c.Context, metadata.Caller)))
+		// set tarce id in header
+		c.Request.Header.Set(trace.KratosTraceID, t.TraceID())
+		// export trace id to user.
+		c.Writer.Header().Set(trace.KratosTraceID, t.TraceID())
 		c.Context = trace.NewContext(c.Context, t)
 		c.Next()
 		t.Finish(&c.Error)
@@ -49,8 +54,8 @@ func (c *closeTracker) Close() error {
 	return err
 }
 
-// NewTraceTracesport NewTraceTracesport
-func NewTraceTracesport(rt http.RoundTripper, peerService string, internalTags ...trace.Tag) *TraceTransport {
+// NewTraceTransport NewTraceTransport
+func NewTraceTransport(rt http.RoundTripper, peerService string, internalTags ...trace.Tag) *TraceTransport {
 	return &TraceTransport{RoundTripper: rt, peerService: peerService, internalTags: internalTags}
 }
 

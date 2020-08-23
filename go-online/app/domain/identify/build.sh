@@ -23,9 +23,9 @@ then
     echo "$app starting..."
     if [[ -n "$1" && "$1" = "release" ]]
     then
-		nohup $servicePath/$appdir/$app -conf ../conf -log.dir /data/log_xunqunwang/domain/identify/ >/data/log_xunqunwang/domain/identify/identify.nohup &
+		nohup $servicePath/$appdir/$app -appid domain.identify -conf ../configs -log.dir /data/log_xunqunwang/domain/identify/ >/data/log_xunqunwang/domain/identify/identify.nohup &
     else
-		nohup $servicePath/$appdir/$app -conf ../conf -log.dir ./../../../../log/domain/identify/ >./../../../../log/domain/identify/identify.nohup &
+		nohup $servicePath/$appdir/$app -appid domain.identify -conf ../conf -log.dir ./../../../../log/domain/identify/ >./../../../../log/domain/identify/identify.nohup &
     fi
     echo "end..." 
 fi

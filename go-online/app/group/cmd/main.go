@@ -6,8 +6,7 @@ import (
 	"go-online/lib/conf/paladin"
 	"go-online/lib/ecode/tip"
 	"go-online/lib/log"
-
-	// "go-online/lib/net/trace"
+	"go-online/lib/net/trace/zipkin"
 	"go-online/lib/os/signal"
 	"go-online/lib/syscall"
 	"os"
@@ -24,8 +23,7 @@ func main() {
 	log.Init(nil)
 	defer log.Close()
 	log.Info("group start")
-	// trace.Init(conf.Conf.Tracer)
-	// defer trace.Close()
+	zipkin.Init(nil)
 	paladin.Init()
 	tip.Init(nil)
 	_, closeFunc, err = di.InitApp()

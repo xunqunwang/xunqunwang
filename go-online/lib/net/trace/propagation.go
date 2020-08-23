@@ -1,35 +1,35 @@
 package trace
 
 import (
+	errs "errors"
 	"net/http"
 
-	"github.com/pkg/errors"
 	"google.golang.org/grpc/metadata"
 )
 
 var (
 	// ErrUnsupportedFormat occurs when the `format` passed to Tracer.Inject() or
 	// Tracer.Extract() is not recognized by the Tracer implementation.
-	ErrUnsupportedFormat = errors.New("trace: Unknown or unsupported Inject/Extract format")
+	ErrUnsupportedFormat = errs.New("trace: Unknown or unsupported Inject/Extract format")
 
 	// ErrTraceNotFound occurs when the `carrier` passed to
 	// Tracer.Extract() is valid and uncorrupted but has insufficient
 	// information to extract a Trace.
-	ErrTraceNotFound = errors.New("trace: Trace not found in Extract carrier")
+	ErrTraceNotFound = errs.New("trace: Trace not found in Extract carrier")
 
 	// ErrInvalidTrace errors occur when Tracer.Inject() is asked to
 	// operate on a Trace which it is not prepared to handle (for
 	// example, since it was created by a different tracer implementation).
-	ErrInvalidTrace = errors.New("trace: Trace type incompatible with tracer")
+	ErrInvalidTrace = errs.New("trace: Trace type incompatible with tracer")
 
 	// ErrInvalidCarrier errors occur when Tracer.Inject() or Tracer.Extract()
 	// implementations expect a different type of `carrier` than they are
 	// given.
-	ErrInvalidCarrier = errors.New("trace: Invalid Inject/Extract carrier")
+	ErrInvalidCarrier = errs.New("trace: Invalid Inject/Extract carrier")
 
 	// ErrTraceCorrupted occurs when the `carrier` passed to
 	// Tracer.Extract() is of the expected type but is corrupted.
-	ErrTraceCorrupted = errors.New("trace: Trace data corrupted in Extract carrier")
+	ErrTraceCorrupted = errs.New("trace: Trace data corrupted in Extract carrier")
 )
 
 // BuiltinFormat is used to demarcate the values within package `trace`
@@ -112,46 +112,46 @@ func (g grpcCarrier) Get(key string) string {
 	if v, ok := g[key]; ok && len(v) > 0 {
 		return v[0]
 	}
-	ts := g[legacyGRPCKey]
-	if len(ts) != 8 {
-		return ""
-	}
-	switch key {
-	case KeyTraceID:
-		return ts[0]
-	case KeyTraceSpanID:
-		return ts[1]
-	case KeyTraceParentID:
-		return ts[2]
-	case KeyTraceLevel:
-		return ts[3]
-	case KeyTraceSampled:
-		return ts[4]
-	case KeyTraceCaller:
-		return ts[5]
-	}
+	// ts := g[legacyGRPCKey]
+	// if len(ts) != 8 {
+	// 	return ""
+	// }
+	// switch key {
+	// case KeyTraceID:
+	// 	return ts[0]
+	// case KeyTraceSpanID:
+	// 	return ts[1]
+	// case KeyTraceParentID:
+	// 	return ts[2]
+	// case KeyTraceLevel:
+	// 	return ts[3]
+	// case KeyTraceSampled:
+	// 	return ts[4]
+	// case KeyTraceCaller:
+	// 	return ts[5]
+	// }
 	return ""
 }
 
 func (g grpcCarrier) Set(key, val string) {
-	ts := make([]string, 8)
-	g[legacyGRPCKey] = ts
-	switch key {
-	case KeyTraceID:
-		ts[0] = val
-	case KeyTraceSpanID:
-		ts[1] = val
-	case KeyTraceParentID:
-		ts[2] = val
-	case KeyTraceLevel:
-		ts[3] = val
-	case KeyTraceSampled:
-		ts[4] = val
-	case KeyTraceCaller:
-		ts[5] = val
-	default:
-		g[key] = append(g[key], val)
-	}
+	// ts := make([]string, 8)
+	// g[legacyGRPCKey] = ts
+	// switch key {
+	// case KeyTraceID:
+	// 	ts[0] = val
+	// case KeyTraceSpanID:
+	// 	ts[1] = val
+	// case KeyTraceParentID:
+	// 	ts[2] = val
+	// case KeyTraceLevel:
+	// 	ts[3] = val
+	// case KeyTraceSampled:
+	// 	ts[4] = val
+	// case KeyTraceCaller:
+	// 	ts[5] = val
+	// default:
+	g[key] = append(g[key], val)
+	// }
 }
 
 func (grpcPropagator) Inject(carrier interface{}) (Carrier, error) {

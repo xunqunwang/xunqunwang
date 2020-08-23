@@ -6,10 +6,10 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/pkg/errors"
-
 	"go-online/lib/conf/env"
-	"go-online/lib/net/metadata"
+	"go-online/lib/net/ip"
+
+	"github.com/pkg/errors"
 )
 
 var _hostHash byte
@@ -21,20 +21,12 @@ func init() {
 
 func extendTag() (tags []Tag) {
 	tags = append(tags,
-		TagString("hostname", env.Hostname),
-		TagString("ip", env.IP),
-		TagString("zone", env.Zone),
 		TagString("region", env.Region),
+		TagString("zone", env.Zone),
+		TagString("hostname", env.Hostname),
+		TagString("ip", ip.InternalIP()),
 	)
 	return
-}
-
-func serviceNameFromEnv() string {
-	return env.AppID
-}
-
-func isUATEnv() bool {
-	return env.DeployEnv == env.DeployEnvUat
 }
 
 func genID() uint64 {
@@ -52,14 +44,10 @@ type stackTracer interface {
 
 type ctxKey string
 
-var _ctxkey ctxKey = "go-common/net/trace.trace"
+var _ctxkey ctxKey = "kratos/pkg/net/trace.trace"
 
 // FromContext returns the trace bound to the context, if any.
 func FromContext(ctx context.Context) (t Trace, ok bool) {
-	if v := metadata.Value(ctx, metadata.Trace); v != nil {
-		t, ok = v.(Trace)
-		return
-	}
 	t, ok = ctx.Value(_ctxkey).(Trace)
 	return
 }
@@ -67,9 +55,5 @@ func FromContext(ctx context.Context) (t Trace, ok bool) {
 // NewContext new a trace context.
 // NOTE: This method is not thread safe.
 func NewContext(ctx context.Context, t Trace) context.Context {
-	if md, ok := metadata.FromContext(ctx); ok {
-		md[metadata.Trace] = t
-		return ctx
-	}
 	return context.WithValue(ctx, _ctxkey, t)
 }

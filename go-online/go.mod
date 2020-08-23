@@ -17,6 +17,7 @@ require (
 	github.com/micro/go-micro/v2 v2.9.1
 	github.com/naoina/go-stringutil v0.1.0 // indirect
 	github.com/naoina/toml v0.1.1
+	github.com/openzipkin/zipkin-go v0.2.1
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.5.1
 	github.com/sirupsen/logrus v1.5.0

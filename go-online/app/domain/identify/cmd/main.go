@@ -11,8 +11,8 @@ import (
 	"go-online/lib/conf/paladin"
 	"go-online/lib/log"
 
-	// "go-online/lib/net/trace"
 	"go-online/app/domain/identify/di"
+	"go-online/lib/net/trace/zipkin"
 )
 
 var (
@@ -26,8 +26,7 @@ func main() {
 	log.Init(nil)
 	defer log.Close()
 	log.Info("domain.identify start")
-	// trace.Init(conf.Conf.Tracer)
-	// defer trace.Close()
+	zipkin.Init(nil)
 	paladin.Init()
 	tip.Init(nil)
 	_, closeFunc, err = di.InitApp()

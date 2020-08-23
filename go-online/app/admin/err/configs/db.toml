@@ -1,0 +1,11 @@
+[Client]
+	addr = "127.0.0.1:3306"
+	# dsn = "{user}:{password}@tcp(127.0.0.1:3306)/{database}?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4,utf8"
+	dsn = "host=127.0.0.1 port=5432 user=admin dbname=admin password=Admin.2020 sslmode=disable"
+	readDSN = ["{user}:{password}@tcp(127.0.0.2:3306)/{database}?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4,utf8","{user}:{password}@tcp(127.0.0.3:3306)/{database}?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8,utf8mb4"]
+	active = 20
+	idle = 10
+	idleTimeout ="4h"
+	queryTimeout = "200ms"
+	execTimeout = "300ms"
+	tranTimeout = "400ms"

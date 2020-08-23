@@ -5,6 +5,7 @@ import (
 	"go-online/app/admin/err/di"
 	"go-online/lib/conf/paladin"
 	"go-online/lib/log"
+	"go-online/lib/net/trace/zipkin"
 	"os"
 	"os/signal"
 	"syscall"
@@ -16,6 +17,7 @@ func main() {
 	log.Init(nil) // debug flag: log.dir={path}
 	defer log.Close()
 	log.Info("admin-err start")
+	zipkin.Init(nil)
 	paladin.Init()
 	_, closeFunc, err := di.InitApp()
 	if err != nil {
