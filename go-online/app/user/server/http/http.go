@@ -41,6 +41,8 @@ func initRouter(e *bm.Engine) {
 		g.POST("/register", userRegister)
 		g.PUT("/login", userLogin)
 		g.PUT("/logout", userLogout)
+		g.GET("/verification_code", verificationCode)
+		g.PUT("/new_password", resetPassword)
 	}
 }
 

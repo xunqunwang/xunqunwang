@@ -158,6 +158,27 @@ func userLogout(c *bm.Context) {
 	c.JSON(nil, nil)
 }
 
+func verificationCode(c *bm.Context) {
+	arg := new(struct {
+		Email string `json:"email" form:"email" validate:"required,email"`
+	})
+	if err := c.Bind(arg); err != nil {
+		return
+	}
+	c.JSON(nil, actSrv.SendVerificationCode(arg.Email))
+}
+
+func resetPassword(c *bm.Context) {
+	arg := new(struct {
+		VCode    string `json:"vcode" form:"vcode" validate:"required"`
+		Password string `json:"password" form:"password" validate:"password"`
+	})
+	if err := c.Bind(arg); err != nil {
+		return
+	}
+	c.JSON(nil, actSrv.ResetPassword(arg.VCode, arg.Password))
+}
+
 func generateToken(uid int64) string {
 	currentTime := time.Now().Unix()
 	h := md5.New()
