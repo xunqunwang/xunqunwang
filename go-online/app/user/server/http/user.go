@@ -171,12 +171,35 @@ func verificationCode(c *bm.Context) {
 func resetPassword(c *bm.Context) {
 	arg := new(struct {
 		VCode    string `json:"vcode" form:"vcode" validate:"required"`
-		Password string `json:"password" form:"password" validate:"password"`
+		Password string `json:"password" form:"password" validate:"required"`
 	})
 	if err := c.Bind(arg); err != nil {
 		return
 	}
 	c.JSON(nil, actSrv.ResetPassword(arg.VCode, arg.Password))
+}
+
+func savePassword(c *bm.Context) {
+	var (
+		err    error
+		userId int64
+	)
+	arg := new(struct {
+		Password string `json:"password" form:"password" validate:"required"`
+		Confirm  string `json:"confirm" form:"confirm" validate:"required"`
+	})
+	if err = c.Bind(arg); err != nil {
+		return
+	}
+	mid := c.Request.Header.Get("mid")
+	userId, _ = strconv.ParseInt(mid, 10, 64)
+	if err = actSrv.DB.Model(&model.User{}).Where("id = ?", userId).
+		Update("password", arg.Password).Error; err != nil {
+		log.Error("savePassword modify user password error(%v)", err)
+		c.JSON(nil, err)
+		return
+	}
+	c.JSON(nil, nil)
 }
 
 func generateToken(uid int64) string {

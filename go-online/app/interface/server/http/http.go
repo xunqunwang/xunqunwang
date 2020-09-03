@@ -70,6 +70,9 @@ func initRouter(e *bm.Engine) {
 		userGroup.POST("/register", authSvc.Guest, verifySvc.Verify, userProxyHandler)
 		userGroup.PUT("/login", authSvc.Guest, verifySvc.Verify, userProxyHandler)
 		userGroup.PUT("/logout", authSvc.User, verifySvc.Verify, userProxyHandler)
+		userGroup.PUT("/save_password", authSvc.User, verifySvc.Verify, userProxyHandler)
+		userGroup.GET("/verification_code", authSvc.Guest, verifySvc.Verify, userProxyHandler)
+		userGroup.PUT("/new_password", authSvc.Guest, verifySvc.Verify, userProxyHandler)
 	}
 }
 

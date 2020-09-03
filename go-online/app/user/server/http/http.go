@@ -43,6 +43,7 @@ func initRouter(e *bm.Engine) {
 		g.PUT("/logout", userLogout)
 		g.GET("/verification_code", verificationCode)
 		g.PUT("/new_password", resetPassword)
+		g.PUT("/save_password", savePassword)
 	}
 }
 

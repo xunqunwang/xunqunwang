@@ -44,7 +44,7 @@ func (RoleRightR) TableName() string {
 type VCode struct {
 	Id        int64     `json:"id" form:"id" gorm:"primary_key;column:id"`
 	Code      string    `json:"code" form:"code" gorm:"column:code"`
-	UserId    int64     `json:"user_id" form:"user_id" gorm:"primary_key;column:user_id"`
+	UserId    int64     `json:"user_id" form:"user_id" gorm:"column:user_id"`
 	CreatedAt time.Time `json:"created_at" form:"created_at" gorm:"column:created_at"`
 	ExpiredAt time.Time `json:"expired_at" form:"expired_at" gorm:"column:expired_at"`
 }

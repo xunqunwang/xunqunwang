@@ -40,24 +40,15 @@ func (s *Service) SendVerificationCode(email string) (err error) {
 	mailTo := []string{email}
 	subject := "[xunqunwang] Please verify your device"
 	body := fmt.Sprintf(`Hey %s!
+	<p>
+	<br />A sign in attempt requires further verification because we did not recognize your device. To complete the sign in, enter the verification code on the unrecognized device.
+	</p>
+	<br />Device: Chrome on Windows
+	<br />Verification code: %s
+	<p>
+	<br />Thanks,
+	<br />The ThreePeople Team</p>`, user.LoginName, code)
 
-A sign in attempt requires further verification because we did not recognize your device. To complete the sign in, enter the verification code on the unrecognized device.
-
-Device: Chrome on Windows
-Verification code: %s
-
-Thanks,
-The ThreePeople Team`, user.LoginName, code)
-
-	// body := `Hey wkKaidy!
-
-	// A sign in attempt requires further verification because we did not recognize your device. To complete the sign in, enter the verification code on the unrecognized device.
-
-	// Device: Chrome on Windows
-	// Verification code: 436291
-
-	// Thanks,
-	// The ThreePeople Team`
 	if err = mail.SendMail(mailTo, subject, body); err != nil {
 		log.Error("SendVerificationCode(%s) error(%v)", email, err)
 		return
@@ -70,6 +61,10 @@ func (s *Service) ResetPassword(code, password string) (err error) {
 	vcode := new(model.VCode)
 	if err = s.DB.Where("code = ?", code).First(vcode).Error; err != nil {
 		log.Error("ResetPassword(%s,%s) error(%v)", code, password, err)
+		err = ecode.CaptchaErr
+		return
+	}
+	if vcode.ExpiredAt.Before(time.Now()) {
 		err = ecode.CaptchaErr
 		return
 	}
